@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 from queue import PriorityQueue
 from collections import deque
-from .models import ParkingSpot
+from models import ParkingSpot
 
 class ParkingLot:
     """
