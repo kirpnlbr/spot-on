@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Tuple
-from parking import ParkingLot
-from models import ParkingSpot
+from .parking import ParkingLot
+from .models import ParkingSpot
 
 class SpotOnSystem:
     """
