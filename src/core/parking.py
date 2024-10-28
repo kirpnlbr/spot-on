@@ -4,15 +4,6 @@ from collections import deque
 from .models import ParkingSpot
 
 class ParkingLot:
-    """
-    Manages the parking lot operations including spot allocation and tracking.
-    
-    Uses multiple data structures for efficient operations:
-    - Hash table (dict) for O(1) spot lookups
-    - Priority queue for nearest spot allocation
-    - Dictionary of lists for level-based organization
-    """
-    
     def __init__(self, is_multi_level: bool = False):
         self.is_multi_level = is_multi_level
         self.spots: Dict[str, ParkingSpot] = {}
@@ -20,7 +11,6 @@ class ParkingLot:
         self.levels: Dict[int, List[str]] = {}
         
     def add_parking_spot(self, spot_id: str, level: int, distance: float) -> None:
-        """Add a new parking spot to the system."""
         spot = ParkingSpot(id=spot_id, level=level, distance_from_entrance=distance)
         self.spots[spot_id] = spot
         self.available_spots.put((distance, spot_id))
@@ -29,8 +19,7 @@ class ParkingLot:
             self.levels[level] = []
         self.levels[level].append(spot_id)
 
-    def find_nearest_spot(self) -> Optional[str]:
-        """Find nearest available parking spot using greedy approach."""
+    def find_nearest_spot(self) -> Optional[str]: # use greedy algorithm
         if self.available_spots.empty():
             return None
             
@@ -40,8 +29,7 @@ class ParkingLot:
                 return spot_id
         return None
 
-    def find_nearest_spot_bfs(self, start_level: int) -> Optional[str]:
-        """Find nearest available spot using BFS for multi-level structures."""
+    def find_nearest_spot_bfs(self, start_level: int) -> Optional[str]: # only for multi-level parking!
         if not self.is_multi_level:
             return self.find_nearest_spot()
             
@@ -63,7 +51,6 @@ class ParkingLot:
         return None
 
     def allocate_spot(self, vehicle_id: str, spot_id: str) -> bool:
-        """Allocate a specific spot to a vehicle."""
         if spot_id not in self.spots or self.spots[spot_id].is_occupied:
             return False
             
@@ -73,7 +60,6 @@ class ParkingLot:
         return True
 
     def release_spot(self, spot_id: str) -> bool:
-        """Release a parking spot when vehicle leaves."""
         if spot_id not in self.spots or not self.spots[spot_id].is_occupied:
             return False
             
