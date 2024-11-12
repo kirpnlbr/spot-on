@@ -1,5 +1,6 @@
 import ParkingLotsPage from "./pages/ParkingLotsPage";
 import ParkingGridPage from "./pages/ParkingGridPage";
+import NavigationPage from "./pages/NavigationPage";
 
 function App() {
   return (
@@ -7,6 +8,7 @@ function App() {
     <div class="max-w-sm bg-white mx-auto h-screen">
       <ParkingLotsPage />
       <ParkingGridPage />
+      <NavigationPage />
     </div>
   );
 }

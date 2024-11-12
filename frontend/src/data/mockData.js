@@ -59,3 +59,11 @@ export const parkingGrid = [
 
     }
 ];
+
+export const nearestSpot = [
+    {
+        spot: "A4",
+        distance: "20 meters",
+        estimatedTime: "< 1 min",
+    }
+];
