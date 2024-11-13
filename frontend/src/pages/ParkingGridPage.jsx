@@ -2,7 +2,7 @@ import { parkingGrid } from "../data/mockData"
 import ParkingGrid from "../components/parking/ParkingGrid";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
-function ParkingGridPage() {
+function ParkingGridPage({ lot, onBack }) {
 
     const parkingLot = parkingGrid[0];
 
@@ -10,15 +10,15 @@ function ParkingGridPage() {
         <div class="flex flex-col space-y-4 bg-white min-h-screen">
             {/* Header */}
             <div class="flex p-4 items-center border-b shadow-sm">
-                <button>
+                <button onClick={onBack}>
                     <ArrowLeftIcon />
                 </button>
-                <span class="ml-2 text-lg font-semibold text-gray-900">{parkingLot.name}</span>
+                <span class="ml-2 text-lg font-semibold text-gray-900">{lot.name}</span>
             </div>
 
             {/* Parking Grid */}
             <div class="p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
-                <ParkingGrid />
+                <ParkingGrid selectedLot={lot} />
             </div>
 
             {/* Navigate to Spot */}

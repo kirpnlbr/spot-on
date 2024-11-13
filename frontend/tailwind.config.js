@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         geist: ["Geist", "sans-serif"],
+        lexend: ["Lexend", "sans-serif"],
       },
     },
   },

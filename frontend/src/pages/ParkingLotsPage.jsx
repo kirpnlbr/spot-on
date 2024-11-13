@@ -1,6 +1,6 @@
 import ParkingLots from "../components/parking/ParkingLots";
 
-function ParkingLotsPage() {
+function ParkingLotsPage({ onSelectLot }) {
 
     return (
         <div class="flex flex-col bg-white min-h-screen">
@@ -14,7 +14,7 @@ function ParkingLotsPage() {
             </div>
 
             {/* Parking Lots List */}
-            <ParkingLots />
+            <ParkingLots onSelectLot={onSelectLot} />
         </div>
     );
 }
