@@ -9,7 +9,7 @@ function ParkingLotsPage() {
                 <input
                     type="text"
                     placeholder="Search parking lot..."
-                    class="border border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
+                    class="border-[1.5px] border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
                 />
             </div>
 

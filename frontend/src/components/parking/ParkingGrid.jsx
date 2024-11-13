@@ -13,7 +13,7 @@ function ParkingGrid() {
             aspect-square rounded-lg flex items-center justify-center
             ${spot.isOccupied
                             ? 'bg-gray-200 text-gray-500' // Occupied spot
-                            : 'border-2 border-blue-600 text-blue-600'} // Available spot
+                            : 'border-[1.5px] border-blue-600 text-blue-600'} // Available spot
             `}
                 >
                     {spot.id}

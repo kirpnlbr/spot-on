@@ -14,8 +14,8 @@ function ParkingLots() {
                             <h2 class="font-medium text-gray-900">
                                 {lot.name}
                             </h2>
-                            <p class="text-sm text-gray-500">
-                                {lot.distance} • {lot.spots}
+                            <p class="text-sm text-blue-500">
+                                {lot.distance} <span class="text-gray-500">• {lot.spots}</span>
                             </p>
                         </a>
                     </div>

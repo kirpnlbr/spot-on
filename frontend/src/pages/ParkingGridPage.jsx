@@ -17,16 +17,16 @@ function ParkingGridPage() {
             </div>
 
             {/* Parking Grid */}
-            <div class="p-4 rounded-lg border-[1.5px] border-gray-100">
+            <div class="p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
                 <ParkingGrid />
             </div>
 
             {/* Navigate to Spot */}
-            <div class="p-4 rounded-lg bg-blue-300 border-[1.5px] border-blue-200">
+            <div class="p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
                 <div class="flex flex-col">
-                    <span class="font-medium text-sm text-gray-600">Nearest spot</span>
+                    <span class="font-medium text-sm text-gray-500">Nearest spot found!</span>
                     <span class="font-bold text-lg text-gray-800 pb-4">A4</span>
-                    <button class="rounded-lg px-3 py-2 bg-blue-700 border border-blue-600 text-white font-medium w-full hover:bg-blue-600">Navigate to Spot</button>
+                    <button class="rounded-xl p-3 bg-blue-700 border-[1.5px] border-blue-500 text-white font-medium w-full hover:bg-blue-600">Navigate to Spot</button>
                 </div>
             </div>
 
