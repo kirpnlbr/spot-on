@@ -1,20 +1,20 @@
 import ParkingLots from "../components/parking/ParkingLots";
 
-function ParkingLotsPage() {
+function ParkingLotsPage({ onSelectLot }) {
 
     return (
-        <div class="flex flex-col bg-white">
+        <div class="flex flex-col bg-white min-h-screen">
             {/* Search */}
             <div class="p-4 shadow-sm border-b">
                 <input
                     type="text"
                     placeholder="Search parking lot..."
-                    class="border border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
+                    class="border-[1.5px] border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
                 />
             </div>
 
             {/* Parking Lots List */}
-            <ParkingLots />
+            <ParkingLots onSelectLot={onSelectLot} />
         </div>
     );
 }

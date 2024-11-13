@@ -16,7 +16,31 @@ export const parkingLots = [
         name: "Uptown Parking",
         distance: "8 mins away",
         spots: "34 spots"
-    }
+    },
+    {
+        id: 4,
+        name: "Uptown Parking",
+        distance: "8 mins away",
+        spots: "34 spots"
+    },
+    {
+        id: 5,
+        name: "Uptown Parking",
+        distance: "8 mins away",
+        spots: "34 spots"
+    },
+    {
+        id: 6,
+        name: "Uptown Parking",
+        distance: "8 mins away",
+        spots: "34 spots"
+    },
+    {
+        id: 7,
+        name: "Uptown Parking",
+        distance: "8 mins away",
+        spots: "34 spots"
+    },
 ];
 
 export const parkingGrid = [
