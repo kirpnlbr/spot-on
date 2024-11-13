@@ -8,9 +8,9 @@ function NavigationPage() {
     const spot = nearestSpot[0];
 
     return (
-        <div class="flex flex-col space-y-4 bg-white">
+        <div class="flex flex-col space-y-4 bg-white min-h-screen">
             {/* Header */}
-            <div class="flex flex-col space-y-6 p-4 border-b shadow-sm bg-blue-700 shadow-sm">
+            <div class="flex flex-col space-y-6 p-4 border-b shadow-sm bg-blue-700">
                 <div class="flex items-center">
                     <button class="text-white">
                         <ArrowLeftIcon class="h-4 w-4" />

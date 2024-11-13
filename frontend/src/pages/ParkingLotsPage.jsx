@@ -3,7 +3,7 @@ import ParkingLots from "../components/parking/ParkingLots";
 function ParkingLotsPage() {
 
     return (
-        <div class="flex flex-col bg-white">
+        <div class="flex flex-col bg-white min-h-screen">
             {/* Search */}
             <div class="p-4 shadow-sm border-b">
                 <input

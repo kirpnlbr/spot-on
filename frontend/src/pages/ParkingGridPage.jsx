@@ -7,7 +7,7 @@ function ParkingGridPage() {
     const parkingLot = parkingGrid[0];
 
     return (
-        <div class="flex flex-col space-y-4 bg-white">
+        <div class="flex flex-col space-y-4 bg-white min-h-screen">
             {/* Header */}
             <div class="flex p-4 items-center border-b shadow-sm">
                 <button>
