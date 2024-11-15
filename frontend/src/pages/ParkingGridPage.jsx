@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ParkingGrid from "../components/parking/ParkingGrid";
-import { parkingGrid } from "../data/mockData"; // Import mock data for the parking grid
+import { getParkingGrid } from "../services/api"; // Import API function for the backend
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
 function ParkingGridPage({ lot, onBack }) {
-    const selectedGrid = parkingGrid.find(grid => grid.name === lot.name); // Match the selected lot by name
+    const [parkingGrid, setParkingGrid] = useState([]);
+
+    useEffect(() => {
+        getParkingGrid(lot.name)
+            .then(response => setParkingGrid(response.data.spots))
+            .catch(error => console.error("Failed to fetch parking grid:", error));
+    }, [lot]);
 
     return (
         <div className="flex flex-col space-y-4 bg-white min-h-screen">
@@ -18,7 +24,7 @@ function ParkingGridPage({ lot, onBack }) {
 
             {/* Parking Grid */}
             <div className="p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
-                <ParkingGrid parkingGrid={selectedGrid?.spots || []} />
+                <ParkingGrid parkingGrid={parkingGrid} />
             </div>
 
             {/* Navigate to Spot */}

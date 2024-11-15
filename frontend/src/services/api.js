@@ -22,3 +22,12 @@ export const removeVehicle = (vehicleId) => {
 export const getStatus = () => {
   return axios.get(`${API_BASE_URL}status/`);
 };
+
+export const getParkingGrid = (lotName) => {
+    return axios.get(`${API_BASE_URL}parking_grid/${lotName}/`);
+  };
+
+export const getParkingLots = () => {
+    return axios.get(`${API_BASE_URL}parking_lots/`);
+  };
+  

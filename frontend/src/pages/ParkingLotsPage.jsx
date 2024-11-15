@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ParkingLots from "../components/parking/ParkingLots";
-import { parkingLots } from "../data/mockData"; // Import mock data
+import { getParkingLots } from "../services/api";
 
 function ParkingLotsPage({ onSelectLot }) {
-    const [parkingData] = useState(parkingLots); // Use mock data for parking lots
+    const [parkingData, setParkingData] = useState([]);
+
+    useEffect(() => {
+        getParkingLots()
+            .then(response => setParkingData(response.data))
+            .catch(error => console.error("Failed to fetch parking lots:", error));
+    }, []);
 
     return (
         <div className="flex flex-col bg-white min-h-screen">
-            {/* Search */}
             <div className="p-4 shadow-sm border-b">
                 <input
                     type="text"
@@ -16,7 +21,6 @@ function ParkingLotsPage({ onSelectLot }) {
                 />
             </div>
 
-            {/* Parking Lots List */}
             <ParkingLots onSelectLot={onSelectLot} parkingLots={parkingData} />
         </div>
     );
