@@ -8,9 +8,9 @@ function ParkingGrid({ parkingGrid }) {
                     key={spot.id}
                     className={`
                         aspect-square rounded-lg flex items-center justify-center
-                        ${spot.is_occupied
-                            ? 'bg-gray-200 text-gray-500' // Occupied spot
-                            : 'border-[1.5px] border-blue-600 text-blue-600'} // Available spot
+                        ${spot.isOccupied
+                            ? 'bg-gray-300 text-gray-500' // Style for occupied spots
+                            : 'border-2 border-blue-600 text-blue-600'} // Style for available spots
                     `}
                 >
                     {spot.id}
