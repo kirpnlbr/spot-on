@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ParkingGrid from "../components/parking/ParkingGrid";
-import { getStatus } from "../services/api"; // Fetch parking lot status
+import { parkingGrid } from "../data/mockData"; // Import mock data for the parking grid
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
 function ParkingGridPage({ lot, onBack }) {
-    const [parkingGrid, setParkingGrid] = useState([]);
-
-    useEffect(() => {
-        // Fetch and filter data for the selected lot/level
-        getStatus()
-            .then(response => {
-                const selectedLevelData = response.data.spots_by_level[lot.level];
-                setParkingGrid(selectedLevelData);
-            })
-            .catch(error => {
-                console.error("Failed to fetch parking grid:", error);
-            });
-    }, [lot]);
+    const selectedGrid = parkingGrid.find(grid => grid.name === lot.name); // Match the selected lot by name
 
     return (
         <div className="flex flex-col space-y-4 bg-white min-h-screen">
@@ -30,8 +18,20 @@ function ParkingGridPage({ lot, onBack }) {
 
             {/* Parking Grid */}
             <div className="p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
-                <ParkingGrid parkingGrid={parkingGrid} />
+                <ParkingGrid parkingGrid={selectedGrid?.spots || []} />
             </div>
+
+            {/* Navigate to Spot */}
+            <div className="p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
+                <div className="flex flex-col">
+                    <span className="font-medium text-sm text-gray-500">Nearest spot found!</span>
+                    <span className="font-bold text-lg text-gray-800 pb-4">A4</span>
+                    <button className="rounded-xl p-3 bg-blue-700 border-[1.5px] border-blue-500 text-white font-medium w-full hover:bg-blue-600">
+                        Navigate to Spot
+                    </button>
+                </div>
+            </div>
+
         </div>
     );
 }
