@@ -11,12 +11,15 @@ class ParkingSimulation:
         self.total_spots = num_levels * spots_per_level
         self.initialize_parking_lot()
         
-    def initialize_parking_lot(self): # simulates some parking lot layout
+    def initialize_parking_lot(self):
+        rows = ['A', 'B', 'C', 'D', 'E', 'F']
         spots_config = [
-            (f"L{level+1}-S{spot+1}", level, level * 10 + (spot * 2))
+            (f"L{level+1}-{row}{col}", level, level * 10 + (col * 2))
             for level in range(self.num_levels)
-            for spot in range(self.spots_per_level)
+            for row in rows
+            for col in range(1, 6)
         ]
+        
         self.system.initialize_parking_lot(spots_config)
 
     def simulate_vehicle_arrival(self) -> Tuple[str, bool]: # simulates a vehicle trying to park with its characteristics
