@@ -1,5 +1,3 @@
-// frontend/src/pages/ParkingLotsPage.jsx
-
 import React, { useEffect, useState } from 'react';
 import ParkingLots from "../components/parking/ParkingLots";
 import { getStatus } from "../services/api"; // Import getStatus from api.js
