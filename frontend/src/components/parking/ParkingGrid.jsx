@@ -1,22 +1,17 @@
-import { parkingGrid } from "../../data/mockData"
-
-function ParkingGrid({ selectedLot }) {
-
-    const parkingLot = parkingGrid.find(grid => grid.name === selectedLot.name);
-
-    if (!parkingLot) return null;
+function ParkingGrid({ parkingGrid }) {
+    if (!parkingGrid) return null;
 
     return (
-        <div class="grid grid-cols-5 gap-3">
-            {parkingLot.spots.map((spot) => (
+        <div className="grid grid-cols-5 gap-3">
+            {parkingGrid.map((spot) => (
                 <div
                     key={spot.id}
-                    class={`
+                    className={`
                         aspect-square rounded-lg flex items-center justify-center
-                        ${spot.isOccupied
+                        ${spot.is_occupied
                             ? 'bg-gray-200 text-gray-500' // Occupied spot
                             : 'border-[1.5px] border-blue-600 text-blue-600'} // Available spot
-            `}
+                    `}
                 >
                     {spot.id}
                 </div>
