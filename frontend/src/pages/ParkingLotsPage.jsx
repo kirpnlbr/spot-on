@@ -1,20 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ParkingLots from "../components/parking/ParkingLots";
-import { getStatus } from "../services/api"; // Import getStatus from api.js
+import { parkingLots } from "../data/mockData"; // Import mock data
 
 function ParkingLotsPage({ onSelectLot }) {
-    const [parkingLots, setParkingLots] = useState([]);
-
-    useEffect(() => {
-        // Fetch parking lots data from the backend when the component mounts
-        getStatus()
-            .then(response => {
-                setParkingLots(response.data.spots_by_level); // Assume spots_by_level is grouped by level
-            })
-            .catch(error => {
-                console.error("Failed to fetch parking lots:", error);
-            });
-    }, []);
+    const [parkingData] = useState(parkingLots); // Use mock data for parking lots
 
     return (
         <div className="flex flex-col bg-white min-h-screen">
@@ -28,7 +17,7 @@ function ParkingLotsPage({ onSelectLot }) {
             </div>
 
             {/* Parking Lots List */}
-            <ParkingLots onSelectLot={onSelectLot} parkingLots={parkingLots} />
+            <ParkingLots onSelectLot={onSelectLot} parkingLots={parkingData} />
         </div>
     );
 }
