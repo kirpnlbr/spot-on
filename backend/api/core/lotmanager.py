@@ -1,6 +1,6 @@
 from typing import Dict
 from .system import SpotOnSystem
-from .simulation.engine import ParkingSimulation
+from ..simulation.engine import ParkingSimulation
 
 class ParkingLotManager:
     def __init__(self):

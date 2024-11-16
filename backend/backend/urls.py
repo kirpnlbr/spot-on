@@ -21,11 +21,10 @@ from api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/initialize/', views.initialize_parking_lot, name='initialize_parking_lot'),
-    path('api/park/', views.park_vehicle, name='park_vehicle'),
-    path('api/remove/', views.remove_vehicle, name='remove_vehicle'),
-    path('api/status/', views.get_status, name='get_status'),
+    path('api/initialize/<str:lot_name>/', views.initialize_parking_lot, name='initialize_parking_lot'),
+    path('api/park/', views.park_vehicle, name='park_vehicle'),  # lot_name in POST data
+    path('api/remove/', views.remove_vehicle, name='remove_vehicle'),  # lot_name in POST data
+    path('api/status/<str:lot_name>/', views.get_status, name='get_status'),
     path("api/parking_grid/<str:lot_name>/", views.get_parking_grid, name="get_parking_grid"),
     path('api/parking_lots/', views.get_parking_lots, name='get_parking_lots'),
 ]
-

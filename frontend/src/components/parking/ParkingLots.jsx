@@ -14,6 +14,9 @@ function ParkingLots({ onSelectLot, parkingLots }) {
                         <p class="text-sm text-blue-500">
                             {lot.distance} <span class="text-gray-500">• {lot.spots}</span>
                         </p>
+                        <p class="text-sm text-gray-500">
+                            {lot.is_multi_level ? `${lot.num_levels} Levels` : 'Single Level'}
+                        </p>
                     </a>
                 </div>
             ))}
