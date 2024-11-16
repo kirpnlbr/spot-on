@@ -3,7 +3,7 @@ import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Navigation } from 'lucide-react';
 import { Map } from "../components/parking/Map"
 
-function NavigationPage() {
+function NavigationPage({ onBack, selectedLot }) {
 
     const spot = nearestSpot[0];
 
@@ -12,7 +12,10 @@ function NavigationPage() {
             {/* Header */}
             <div class="flex flex-col space-y-6 p-4 border-b shadow-sm bg-blue-700">
                 <div class="flex items-center">
-                    <button class="text-white">
+                    <button
+                        onClick={onBack}
+                        class="text-white"
+                    >
                         <ArrowLeftIcon class="h-4 w-4" />
                     </button>
                     <span class="ml-2 text-lg font-semibold text-white">Navigation</span>
