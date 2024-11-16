@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import ParkingGrid from "../components/parking/ParkingGrid";
 import { getParkingGrid } from "../services/api";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
@@ -6,7 +7,7 @@ function ParkingGridPage({ lot, onBack }) {
     const [parkingGrid, setParkingGrid] = useState([]);
     const [selectedLevel, setSelectedLevel] = useState(1);
 
-    const levels = [1, 2, 3]; // replace for kodi
+    const levels = [1, 2, 3, 4, 5]; // replace for kodi
 
     useEffect(() => {
         getParkingGrid(lot.name)
@@ -26,20 +27,21 @@ function ParkingGridPage({ lot, onBack }) {
 
             {/* Level Selector */}
             <div class="px-5">
-                <div class="inline-flex p-1 space-x-1 bg-gray-100 rounded-lg">
+                <p class="text-gray-500 text-sm font-medium mb-1.5">Current level</p>
+                <div class="flex gap-2 p-1 bg-gray-100 rounded-lg overflow-x-auto shadow-sm">
                     {levels.map((level) => (
                         <button
                             key={level}
                             onClick={() => setSelectedLevel(level)}
                             class={`
-                                px-4 py-2 font-medium transition-colors rounded-md
+                                flex-1 px-4 py-2 font-medium transition-colors rounded-md whitespace-nowrap
                                 ${selectedLevel == level
                                     ? "bg-white text-blue-700"
                                     : "text-gray-500 hover:text-gray-900"
                                 }
                             `}
                         >
-                            Level {level}
+                            L{level}
                         </button>
                     ))}
 
@@ -47,12 +49,13 @@ function ParkingGridPage({ lot, onBack }) {
             </div>
 
             {/* Parking Grid */}
-            <div class="p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
+            <div class="mx-4 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
+                <p class="text-gray-500 text-sm font-medium mb-2">Parking layout</p>
                 <ParkingGrid parkingGrid={parkingGrid} />
             </div>
 
             {/* Navigate to Spot */}
-            <div class="p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
+            <div class="mx-4 p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
                 <div class="flex flex-col">
                     <span class="font-medium text-sm text-gray-500">Nearest spot found!</span>
                     <span class="font-bold text-lg text-gray-800 pb-4">A4</span>
