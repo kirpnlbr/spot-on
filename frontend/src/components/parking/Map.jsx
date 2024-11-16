@@ -1,9 +1,9 @@
 export const Map = () => {
     return (
-        <div className="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden">
+        <div class="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden">
             <svg
                 viewBox="0 0 100 100"
-                className="w-full h-full opacity-30"
+                class="w-full h-full opacity-30"
                 preserveAspectRatio="none"
             >
                 <pattern

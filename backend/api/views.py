@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from datetime import datetime
 from .simulation.engine import ParkingSimulation
+from django.http import JsonResponse
 import random
 
 # Initialize the parking simulation with 3 levels and 30 spots per level
@@ -19,29 +20,44 @@ def initialize_parking_lot(request):
 @api_view(['GET'])
 def get_parking_grid(request, lot_name):
     try:
-        print("Fetching parking grid for:", lot_name)  # Debugging log
+        print(f"Fetching parking grid for lot: {lot_name}")  # Debug log
+
+        # Get 'level' from the query parameters
+        level = request.GET.get("level")
+        if level:
+            try:
+                level = int(level)
+                print(f"Requested Level: {level}")  # Debug log
+            except ValueError:
+                return Response({"error": "Invalid level parameter. Must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            level = None  # If level is not provided, default to None
+
+        # Simulate fetching parking grid data
         status_data = simulation.get_current_status()
 
-        # Flatten spots by level into a single list for the frontend
-        grid_data = [
-            {
-                "id": spot["id"],
-                "isOccupied": spot["isOccupied"],
-                "level": level,
-                "distance": spot["distance"],
-                "vehicle_id": spot["vehicle_id"],
-            }
-            for level, spots in status_data["spots_by_level"].items()
-            for spot in spots  # Flatten nested list
-        ]
+        # Adjust levels if needed (backend levels might start from 0)
+        backend_level = level - 1 if level else None
 
-        print("Returning grid data:", grid_data)  # Debugging log
+        # Filter spots by level (if provided)
+        grid_data = []
+        for lvl, spots in status_data["spots_by_level"].items():
+            if backend_level is None or lvl == backend_level:
+                for spot in spots:
+                    grid_data.append({
+                        "id": spot["id"],
+                        "isOccupied": spot["isOccupied"],
+                        "level": spot["level"] + 1,  # Adjusting backend level to match frontend
+                        "distance": spot["distance"],
+                        "vehicle_id": spot["vehicle_id"],
+                    })
+
+        print(f"Returning filtered grid data for Level {level if level else 'All'}:", grid_data)  # Debug log
         return Response({"name": lot_name, "spots": grid_data}, status=status.HTTP_200_OK)
 
     except Exception as e:
-        print("Error fetching parking grid:", str(e))  # Error log
+        print("Error in get_parking_grid:", str(e))  # Error log
         return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['POST'])
 def park_vehicle(request):

@@ -23,9 +23,18 @@ export const getStatus = () => {
   return axios.get(`${API_BASE_URL}status/`);
 };
 
-export const getParkingGrid = (lotName) => {
-    return axios.get(`${API_BASE_URL}parking_grid/${lotName}/`);
-  };
+export const getParkingGrid = async (lotName, level) => {
+  try {
+    console.log(`API call: Fetching parking grid for ${lotName}, Level: ${level}`);
+    const response = await axios.get(`${API_BASE_URL}parking_grid/${encodeURIComponent(lotName)}/?level=${level}`);
+    console.log('Raw API Response:', response); // Debugging
+    return response;
+  } catch (error) {
+    console.error('Error in getParkingGrid API call:', error);
+    throw error;
+  }
+};
+
 
 export const getParkingLots = () => {
     return axios.get(`${API_BASE_URL}parking_lots/`);
