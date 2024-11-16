@@ -49,13 +49,13 @@ function ParkingGridPage({ lot, onBack }) {
             </div>
 
             {/* Parking Grid */}
-            <div class="mx-4 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
+            <div class="mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
                 <p class="text-gray-500 text-sm font-medium mb-2">Parking layout</p>
                 <ParkingGrid parkingGrid={parkingGrid} />
             </div>
 
             {/* Navigate to Spot */}
-            <div class="mx-4 p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
+            <div class="mx-3 p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
                 <div class="flex flex-col">
                     <span class="font-medium text-sm text-gray-500">Nearest spot found!</span>
                     <span class="font-bold text-lg text-gray-800 pb-4">A4</span>
