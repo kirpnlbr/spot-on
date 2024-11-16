@@ -8,6 +8,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('location');
   const [selectedLot, setSelectedLot] = useState(null);
   const [locationEnabled, setLocationEnabled] = useState(false);
+  const [selectedSpot, setSelectedSpot] = useState(null);
 
   return (
     <div className="max-w-sm font-lexend bg-[#fdfdfb] mx-auto h-screen">
@@ -40,12 +41,19 @@ function App() {
           lot={selectedLot}
           onBack={() => setCurrentPage('lots')}
           onSelectSpot={() => setCurrentPage('navigation')}
+          onNavigate={() => {
+            setSelectedSpot('A4');
+            setCurrentPage('navigation');
+          }}
         />
       )}
 
       {/* Navigation Page */}
+      {/* Navigation Page */}
       {currentPage === 'navigation' && (
         <NavigationPage
+          selectedLot={selectedLot}
+          selectedSpot={selectedSpot}
           onBack={() => setCurrentPage('grid')}
         />
       )}
