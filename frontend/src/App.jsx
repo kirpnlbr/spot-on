@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ParkingLotsPage from "./pages/ParkingLotsPage";
 import ParkingGridPage from "./pages/ParkingGridPage";
 import NavigationPage from "./pages/NavigationPage";
