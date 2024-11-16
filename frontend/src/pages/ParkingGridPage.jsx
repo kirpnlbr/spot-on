@@ -16,9 +16,9 @@ function ParkingGridPage({ lot, onBack }) {
     }, [lot]);
 
     return (
-        <div class="flex flex-col space-y-4 bg-white min-h-screen">
+        <div class="flex flex-col space-y-4 bg-gray-100 min-h-screen">
             {/* Header */}
-            <div class="flex p-4 items-center border-b shadow-sm">
+            <div class="bg-white flex p-4 items-center border-b shadow-sm">
                 <button onClick={onBack}>
                     <ArrowLeftIcon />
                 </button>
@@ -28,7 +28,7 @@ function ParkingGridPage({ lot, onBack }) {
             {/* Level Selector */}
             <div class="px-5">
                 <p class="text-gray-500 text-sm font-medium mb-1.5">Current level</p>
-                <div class="flex gap-2 p-1 bg-gray-100 rounded-lg overflow-x-auto shadow-sm">
+                <div class="flex gap-2 p-1 bg-gray-200 rounded-lg overflow-x-auto shadow-sm">
                     {levels.map((level) => (
                         <button
                             key={level}
@@ -49,13 +49,13 @@ function ParkingGridPage({ lot, onBack }) {
             </div>
 
             {/* Parking Grid */}
-            <div class="mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
+            <div class="bg-white mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
                 <p class="text-gray-500 text-sm font-medium mb-2">Parking layout</p>
                 <ParkingGrid parkingGrid={parkingGrid} />
             </div>
 
             {/* Navigate to Spot */}
-            <div class="mx-3 p-4 rounded-xl bg-gray-100 border-[1.5px] border-gray-200 shadow-sm">
+            <div class="mx-3 p-4 rounded-xl bg-white border-[1.5px] border-gray-100 shadow-sm">
                 <div class="flex flex-col">
                     <span class="font-medium text-sm text-gray-500">Nearest spot found!</span>
                     <span class="font-bold text-lg text-gray-800 pb-4">A4</span>
