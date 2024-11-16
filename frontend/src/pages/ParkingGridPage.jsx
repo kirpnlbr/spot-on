@@ -3,7 +3,7 @@ import ParkingGrid from "../components/parking/ParkingGrid";
 import { getParkingGrid } from "../services/api";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
-function ParkingGridPage({ lot, onBack }) {
+function ParkingGridPage({ lot, onBack, onNavigate }) {
     const [parkingGrid, setParkingGrid] = useState([]);
     const [selectedLevel, setSelectedLevel] = useState(1);
 
@@ -59,7 +59,10 @@ function ParkingGridPage({ lot, onBack }) {
                 <div class="flex flex-col">
                     <span class="font-medium text-sm text-gray-500">Nearest spot found!</span>
                     <span class="font-bold text-lg text-gray-800 pb-4">A4</span>
-                    <button class="rounded-xl p-3 bg-blue-700 border-[1.5px] border-blue-500 text-white font-medium w-full hover:bg-blue-600">
+                    <button
+                        onClick={onNavigate}
+                        class="rounded-xl p-3 bg-blue-700 border-[1.5px] border-blue-500 text-white font-medium w-full hover:bg-blue-600"
+                    >
                         Navigate to Spot
                     </button>
                 </div>
