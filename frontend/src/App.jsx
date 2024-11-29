@@ -1,85 +1,98 @@
 import { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import ParkingLotsPage from "./pages/ParkingLotsPage";
 import ParkingGridPage from "./pages/ParkingGridPage";
 import NavigationPage from "./pages/NavigationPage";
 import LocationPage from "./pages/LocationPage";
 import BottomNav from './components/shared/BottomNav';
+import PageTransition from './components/animations/PageTransition';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('location');
   const [selectedLot, setSelectedLot] = useState(null);
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const [direction, setDirection] = useState(1);
+
+  const changePage = (newPage, transitionDirection) => {
+    setDirection(transitionDirection);
+    setCurrentPage(newPage);
+  };
 
   const handleEnableLocation = () => {
     setLocationEnabled(true);
-    setCurrentPage('lots');
+    changePage('lots', 1);
   };
 
   const handleSkipLocation = () => {
-    setCurrentPage('lots');
+    changePage('lots', 1);
   };
 
   const handleSelectLot = (lot) => {
     setSelectedLot(lot);
-    setCurrentPage('grid');
+    changePage('grid', 1);
   };
 
   const handleBackToLots = () => {
-    setCurrentPage('lots');
+    changePage('lots', -1);
   };
 
   const handleSelectSpot = () => {
-    setCurrentPage('navigation');
+    changePage('navigation', 1);
   };
 
   const handleNavigate = () => {
     setSelectedSpot('A4');
-    setCurrentPage('navigation');
+    changePage('navigation', 1);
   };
 
   const handleBackToGrid = () => {
-    setCurrentPage('grid');
+    changePage('grid', -1);
   };
 
   return (
-    <div class="max-w-sm font-lexend bg-[#F2EFE9] mx-auto h-screen pb-16">
-      {/* Location Page */}
-      {currentPage === 'location' && (
-        <LocationPage
-          onEnableLocation={handleEnableLocation}
-          onSkip={handleSkipLocation}
-        />
-      )}
+    <div className="max-w-sm font-lexend bg-[#F2EFE9] mx-auto h-screen pb-16 relative overflow-hidden">
+      <AnimatePresence mode="wait" initial={false}>
+        {currentPage === 'location' && (
+          <PageTransition key="location" direction={direction}>
+            <LocationPage
+              onEnableLocation={handleEnableLocation}
+              onSkip={handleSkipLocation}
+            />
+          </PageTransition>
+        )}
 
-      {/* Parking Lots Page */}
-      {currentPage === 'lots' && (
-        <ParkingLotsPage
-          onSelectLot={handleSelectLot}
-        />
-      )}
+        {currentPage === 'lots' && (
+          <PageTransition key="lots" direction={direction}>
+            <ParkingLotsPage
+              onSelectLot={handleSelectLot}
+            />
+          </PageTransition>
+        )}
 
-      {/* Parking Grid Page */}
-      {currentPage === 'grid' && (
-        <ParkingGridPage
-          lot={selectedLot}
-          onBack={handleBackToLots}
-          onSelectSpot={handleSelectSpot}
-          onNavigate={handleNavigate}
-        />
-      )}
+        {currentPage === 'grid' && (
+          <PageTransition key="grid" direction={direction}>
+            <ParkingGridPage
+              lot={selectedLot}
+              onBack={handleBackToLots}
+              onSelectSpot={handleSelectSpot}
+              onNavigate={handleNavigate}
+            />
+          </PageTransition>
+        )}
 
-      {/* Navigation Page */}
-      {currentPage === 'navigation' && (
-        <NavigationPage
-          selectedLot={selectedLot}
-          selectedSpot={selectedSpot}
-          onBack={handleBackToGrid}
-        />
-      )}
+        {currentPage === 'navigation' && (
+          <PageTransition key="navigation" direction={direction}>
+            <NavigationPage
+              selectedLot={selectedLot}
+              selectedSpot={selectedSpot}
+              onBack={handleBackToGrid}
+            />
+          </PageTransition>
+        )}
+      </AnimatePresence>
 
       <BottomNav />
-
     </div>
   );
 }
