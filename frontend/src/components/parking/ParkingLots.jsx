@@ -1,18 +1,21 @@
 function ParkingLots({ onSelectLot, parkingLots }) {
     return (
-        <div className="flex-1">
+        <div class="flex-1">
             {parkingLots.map((lot) => (
                 <div
                     key={lot.id}
-                    className="p-4 border-b last:border-b-0 hover:bg-gray-50"
+                    class="p-4 border-b last:border-b-0 hover:bg-gray-50"
                     onClick={() => onSelectLot(lot)}
                 >
-                    <a className="flex flex-col gap-1">
-                        <h2 className="font-medium text-gray-900">
+                    <a class="flex flex-col gap-1">
+                        <h2 class="font-medium text-gray-900">
                             {lot.name}
                         </h2>
-                        <p className="text-sm text-blue-500">
-                            {lot.distance} <span className="text-gray-500">• {lot.spots}</span>
+                        <p class="text-sm text-blue-500">
+                            {lot.distance} <span class="text-gray-500">• {lot.spots}</span>
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            {lot.is_multi_level ? `${lot.num_levels} Levels` : 'Single Level'}
                         </p>
                     </a>
                 </div>

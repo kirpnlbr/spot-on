@@ -11,7 +11,7 @@ function App() {
   const [selectedSpot, setSelectedSpot] = useState(null);
 
   return (
-    <div className="max-w-sm font-lexend bg-[#fdfdfb] mx-auto h-screen">
+    <div class="max-w-sm font-lexend bg-[#fdfdfb] mx-auto h-screen">
       {/* Location Page */}
       {currentPage === 'location' && (
         <LocationPage

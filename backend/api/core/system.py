@@ -40,3 +40,6 @@ class SpotOnSystem:
 
     def get_vehicle_location(self, vehicle_id: str) -> Optional[str]:
         return self.vehicle_to_spot.get(vehicle_id)
+    
+    def get_total_occupied_spots(self) -> int:
+        return len(self.vehicle_to_spot)
