@@ -194,7 +194,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                         className={`rounded-xl p-3 border-[1.5px] border-blue-500 text-white font-medium w-full 
                         ${
                             nearestSpotId
-                                ? 'bg-blue-700 hover:bg-blue-600'
+                                ? 'bg-[#068ef1] hover:bg-blue-600'
                                 : 'bg-gray-400 cursor-not-allowed'
                         }`}
                         disabled={!nearestSpotId}

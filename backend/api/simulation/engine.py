@@ -264,7 +264,7 @@ class ParkingSimulation:
             logger.warning(f"Failed to remove vehicle {vehicle_id}.")
             return False
 
-    def start_simulation(self, duration_seconds: int = 60, update_interval: float = 1.0, arrival_rate: float = 0.8, departure_rate: float = 0.2):
+    def start_simulation(self, duration_seconds: int = 60, update_interval: float = 1.0, arrival_rate: float = 0.7, departure_rate: float = 0.3):
     
         if self.is_simulation_running:
             logger.warning("Simulation is already running.")
