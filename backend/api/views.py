@@ -216,7 +216,9 @@ def start_simulation(request, lot_name):
     Start the simulation for a specific parking lot.
     """
     duration_seconds = request.data.get('duration_seconds', 60)
-    update_interval = request.data.get('update_interval', 2.0)
+    update_interval = request.data.get('update_interval', 2)
+    arrival_rate = request.data.get('arrival_rate', 0.5)
+    departure_rate = request.data.get('departure_rate', 0.5)
 
     simulation = parking_lot_manager.get_parking_lot(lot_name)
     if not simulation:
@@ -231,10 +233,14 @@ def start_simulation(request, lot_name):
             status=status.HTTP_200_OK
         )
 
+    # Optionally, update the rates before starting the simulation
+    simulation.arrival_rate = float(arrival_rate)
+    simulation.departure_rate = float(departure_rate)
+
     try:
         parking_lot_manager.start_simulation(lot_name, int(duration_seconds), float(update_interval))
         return Response(
-            {"message": f"Simulation started for '{lot_name}'."},
+            {"message": f"Simulation started for '{lot_name}' with arrival_rate={arrival_rate} and departure_rate={departure_rate}."},
             status=status.HTTP_200_OK
         )
     except Exception as e:
@@ -242,6 +248,19 @@ def start_simulation(request, lot_name):
         return Response(
             {"error": "Failed to start simulation."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    try:
+        arrival_rate = float(arrival_rate)
+        departure_rate = float(departure_rate)
+        if not (0 <= arrival_rate <= 1) or not (0 <= departure_rate <= 1):
+            raise ValueError("Rates must be between 0 and 1.")
+        if arrival_rate + departure_rate > 1:
+            raise ValueError("The sum of arrival_rate and departure_rate must not exceed 1.")
+    except ValueError as ve:
+        return Response(
+            {"error": str(ve)},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 @csrf_exempt

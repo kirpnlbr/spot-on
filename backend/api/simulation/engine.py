@@ -1,20 +1,23 @@
 import random
 import threading
 import time
-from typing import Tuple
+from typing import Tuple, Optional
 from datetime import datetime
 from ..core.system import SpotOnSystem
 
 class ParkingSimulation:
-    def __init__(self, lot_name: str, num_levels: int, is_multi_level: bool):
+    def __init__(self, lot_name: str, num_levels: int, is_multi_level: bool,
+                 arrival_rate: float = 0.7, departure_rate: float = 0.3):
         self.lot_name = lot_name
         self.is_multi_level = is_multi_level
         self.num_levels = num_levels
-        self.level_layouts = {}
+        self.level_layouts: Dict[int, Tuple[int, int]] = {}
         self.system = SpotOnSystem(is_multi_level=is_multi_level)
-        self.total_spots = 0
-        self.is_simulation_running = False
-        self.simulation_thread = None
+        self.total_spots: int = 0
+        self.is_simulation_running: bool = False
+        self.simulation_thread: Optional[threading.Thread] = None
+        self.arrival_rate = arrival_rate
+        self.departure_rate = departure_rate
         self.initialize_parking_lot()
 
     def initialize_parking_lot(self):
@@ -108,12 +111,24 @@ class ParkingSimulation:
     def run_simulation(self, duration_seconds: int, update_interval: float):
         start_time = time.time()
         while self.is_simulation_running and (time.time() - start_time < duration_seconds):
-            if random.random() < 0.7:
+            action = random.random()
+            if action < self.arrival_rate:
                 # Simulate vehicle arrival
-                self.simulate_vehicle_arrival()
-            else:
+                vehicle_id, success = self.simulate_vehicle_arrival()
+                if success:
+                    print(f"Vehicle {vehicle_id} parked successfully.")
+                else:
+                    print(f"Vehicle {vehicle_id} failed to park. No available spots.")
+            elif action < self.arrival_rate + self.departure_rate:
                 # Simulate vehicle departure
-                self.simulate_vehicle_departure()
+                success = self.simulate_vehicle_departure()
+                if success:
+                    print("A vehicle has left the parking lot.")
+                else:
+                    print("No vehicles to remove.")
+            else:
+                # Idle step (no action)
+                print("No action this interval.")
             time.sleep(update_interval)
         self.is_simulation_running = False
 

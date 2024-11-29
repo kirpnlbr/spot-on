@@ -6,9 +6,12 @@ class ParkingLotManager:
     def __init__(self):
         self.parking_lots: Dict[str, ParkingSimulation] = {}
 
-    def add_parking_lot(self, lot_name: str, num_levels: int, is_multi_level: bool):
+    def add_parking_lot(self, lot_name: str, num_levels: int, is_multi_level: bool,
+                       arrival_rate: float = 0.7, departure_rate: float = 0.3):
         if lot_name not in self.parking_lots:
-            simulation = ParkingSimulation(lot_name, num_levels, is_multi_level)
+            simulation = ParkingSimulation(lot_name, num_levels, is_multi_level,
+                                          arrival_rate=arrival_rate,
+                                          departure_rate=departure_rate)
             self.parking_lots[lot_name] = simulation
 
     def get_parking_lot(self, lot_name: str) -> ParkingSimulation:
