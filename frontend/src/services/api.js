@@ -1,99 +1,50 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/';
+const API_BASE_URL = 'http://localhost:8000/api'; // Adjust as needed
 
-/**
- * Initialize a specific parking lot with a new configuration.
- * @param {string} lotName - The name of the parking lot to initialize.
- */
+export const getParkingGrid = (lotName, level) => {
+    const url = `${API_BASE_URL}/parking_grid/${encodeURIComponent(lotName)}/`;
+    return axios.get(url, { params: { level } });
+};
+
 export const initializeParkingLot = (lotName) => {
-  return axios.get(`${API_BASE_URL}initialize/${encodeURIComponent(lotName)}/`);
+    const url = `${API_BASE_URL}/initialize/${encodeURIComponent(lotName)}/`;
+    return axios.get(url);
 };
 
-/**
- * Park a vehicle in a specific parking lot.
- * @param {string} lotName - The name of the parking lot.
- * @param {string} vehicleId - The ID of the vehicle.
- * @param {number} preferredLevel - The preferred level for parking.
- */
-export const parkVehicle = (lotName, vehicleId, preferredLevel) => {
-  return axios.post(`${API_BASE_URL}park/`, {
-    lot_name: lotName, // Include lot_name in the request data
-    vehicle_id: vehicleId,
-    preferred_level: preferredLevel,
-  });
-};
-
-/**
- * Remove a vehicle from a specific parking lot.
- * @param {string} lotName - The name of the parking lot.
- * @param {string} vehicleId - The ID of the vehicle to remove.
- */
-export const removeVehicle = (lotName, vehicleId) => {
-  return axios.post(`${API_BASE_URL}remove/`, {
-    lot_name: lotName, // Include lot_name in the request data
-    vehicle_id: vehicleId,
-  });
-};
-
-/**
- * Get the current status of a specific parking lot.
- * @param {string} lotName - The name of the parking lot.
- */
-export const getStatus = (lotName) => {
-  return axios.get(`${API_BASE_URL}status/${encodeURIComponent(lotName)}/`);
-};
-
-/**
- * Fetch the parking grid data for a specific lot and level.
- * @param {string} lotName - The name of the parking lot.
- * @param {number} level - The level number to fetch data for.
- */
-export const getParkingGrid = async (lotName, level) => {
-  try {
-    console.log(`API call: Fetching parking grid for ${lotName}, Level: ${level}`);
-    const response = await axios.get(`${API_BASE_URL}parking_grid/${encodeURIComponent(lotName)}/`, {
-      params: { level },
+export const startSimulation = (lotName, duration_seconds, update_interval, arrival_rate, departure_rate) => {
+    const url = `${API_BASE_URL}/simulation/start/${encodeURIComponent(lotName)}/`;
+    return axios.post(url, {
+        duration_seconds,
+        update_interval,
+        arrival_rate,
+        departure_rate
     });
-    console.log('Raw API Response:', response); // Debugging
-    return response;
-  } catch (error) {
-    console.error('Error in getParkingGrid API call:', error);
-    throw error;
-  }
 };
 
-/**
- * Retrieve a list of all parking lots.
- */
+export const stopSimulation = (lotName) => {
+    const url = `${API_BASE_URL}/simulation/stop/${encodeURIComponent(lotName)}/`;
+    return axios.post(url);
+};
+
+export const parkVehicle = (lotName, vehicle_id, preferred_level) => {
+    const url = `${API_BASE_URL}/park/`;
+    return axios.post(url, {
+        lot_name: lotName,
+        vehicle_id,
+        preferred_level
+    });
+};
+
+export const removeVehicle = (lotName, vehicle_id) => {
+    const url = `${API_BASE_URL}/remove/`;
+    return axios.post(url, {
+        lot_name: lotName,
+        vehicle_id
+    });
+};
+
 export const getParkingLots = () => {
-  return axios.get(`${API_BASE_URL}parking_lots/`);
-};
-
-/**
- * Start the simulation for a specific parking lot.
- * @param {string} lotName - The name of the parking lot.
- */
-export const startSimulation = async (lotName) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}simulation/start/${encodeURIComponent(lotName)}/`);
-    return response;
-  } catch (error) {
-    console.error('Error in startSimulation API call:', error);
-    throw error;
-  }
-};
-
-/**
- * Stop the simulation for a specific parking lot.
- * @param {string} lotName - The name of the parking lot.
- */
-export const stopSimulation = async (lotName) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}simulation/stop/${encodeURIComponent(lotName)}/`);
-    return response;
-  } catch (error) {
-    console.error('Error in stopSimulation API call:', error);
-    throw error;
-  }
+    const url = `${API_BASE_URL}/parking_lots/`;
+    return axios.get(url);
 };

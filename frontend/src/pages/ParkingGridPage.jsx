@@ -1,3 +1,5 @@
+// frontend/src/pages/ParkingGridPage.jsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import ParkingGrid from '../components/parking/ParkingGrid';
 import { getParkingGrid, startSimulation, stopSimulation } from '../services/api';
@@ -9,6 +11,8 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
     const [levels, setLevels] = useState([1]);
     const [simulationRunning, setSimulationRunning] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [nearestSpotId, setNearestSpotId] = useState(null);
+    const [entryPoint, setEntryPoint] = useState(null);
 
     // useRef to keep track of the latest selectedLevel
     const selectedLevelRef = useRef(selectedLevel);
@@ -24,13 +28,36 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
         getParkingGrid(lot.name, selectedLevelRef.current)
             .then(response => {
                 console.log('Parking grid data:', response.data);
+
+                // Set parking grid if available
                 if (response.data.spots) {
                     setParkingGrid(response.data.spots);
-                    // Update levels based on the parking lot's number of levels
+                } else {
+                    console.error('No spots key in API response:', response.data);
+                }
+
+                // Set nearest spot ID
+                if (response.data.nearest_spot_id) {
+                    setNearestSpotId(response.data.nearest_spot_id);
+                } else {
+                    setNearestSpotId(null);
+                    console.warn('No nearest_spot_id in API response.');
+                }
+
+                // Set entry point
+                if (response.data.entry_point) {
+                    setEntryPoint(response.data.entry_point);
+                } else {
+                    setEntryPoint(null);
+                    console.warn('No entry_point in API response.');
+                }
+
+                // Update levels based on the parking lot's number of levels
+                if (response.data.level_layouts) {
                     const numLevels = Object.keys(response.data.level_layouts).length;
                     setLevels(Array.from({ length: numLevels }, (_, i) => i + 1));
                 } else {
-                    console.error('No spots key in API response:', response.data);
+                    console.warn('No level_layouts in API response.');
                 }
             })
             .catch(error => {
@@ -154,13 +181,34 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             <div className="mx-3 p-4 rounded-xl bg-white border-[1.5px] border-gray-100 shadow-sm">
                 <div className="flex flex-col">
                     <span className="font-medium text-sm text-gray-500">Nearest spot found!</span>
-                    <span className="font-bold text-lg text-gray-800 pb-4">A4</span>
+                    <span className="font-bold text-lg text-gray-800 pb-4">
+                        {nearestSpotId ? nearestSpotId.split('-')[1] : 'N/A'}
+                    </span>
                     <button
-                        onClick={onNavigate}
-                        className="rounded-xl p-3 bg-blue-700 border-[1.5px] border-blue-500 text-white font-medium w-full hover:bg-blue-600"
+                        onClick={() => {
+                            if (nearestSpotId && entryPoint) {
+                                onNavigate(nearestSpotId, entryPoint);
+                            } else {
+                                alert('No available spot to navigate.');
+                            }
+                        }}
+                        className={`rounded-xl p-3 border-[1.5px] border-blue-500 text-white font-medium w-full 
+                        ${
+                            nearestSpotId
+                                ? 'bg-blue-700 hover:bg-blue-600'
+                                : 'bg-gray-400 cursor-not-allowed'
+                        }`}
+                        disabled={!nearestSpotId}
+                        title={nearestSpotId ? `Spot ID: ${nearestSpotId}` : 'No available spot'}
                     >
                         Navigate to Spot
                     </button>
+
+                    {/* Debug Information */}
+                    <div className="mt-4 text-xs text-gray-400">
+                        <p>Nearest Spot ID: {nearestSpotId || 'N/A'}</p>
+                        <p>Entry Point: {entryPoint ? `(${entryPoint[0]}, ${entryPoint[1]})` : 'N/A'}</p>
+                    </div>
                 </div>
             </div>
         </div>
