@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ParkingGrid from '../components/parking/ParkingGrid';
 import { getParkingGrid, startSimulation, stopSimulation } from '../services/api';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { ArrowLeft } from 'lucide-react';
 
 function ParkingGridPage({ lot, onBack, onNavigate }) {
     const [parkingGrid, setParkingGrid] = useState([]);
@@ -140,7 +140,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             {/* Header */}
             <div className="bg-white flex p-4 items-center border-b shadow-sm">
                 <button onClick={onBack}>
-                    <ArrowLeftIcon />
+                    <ArrowLeft />
                 </button>
                 <span className="ml-2 text-lg font-semibold text-gray-900">{lot.name}</span>
             </div>
@@ -192,11 +192,10 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                             }
                         }}
                         className={`rounded-xl p-3 border-[1.5px] border-blue-500 text-white font-medium w-full 
-                        ${
-                            nearestSpotId
+                        ${nearestSpotId
                                 ? 'bg-[#068ef1] hover:bg-blue-600'
                                 : 'bg-gray-400 cursor-not-allowed'
-                        }`}
+                            }`}
                         disabled={!nearestSpotId}
                         title={nearestSpotId ? `Spot ID: ${nearestSpotId}` : 'No available spot'}
                     >

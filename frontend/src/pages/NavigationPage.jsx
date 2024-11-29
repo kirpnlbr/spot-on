@@ -1,6 +1,5 @@
 import { nearestSpot } from "../data/mockData"
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Navigation } from 'lucide-react';
+import { Navigation, ArrowLeft } from 'lucide-react';
 import { Map } from "../components/parking/Map"
 
 function NavigationPage({ onBack, selectedLot }) {
@@ -16,7 +15,7 @@ function NavigationPage({ onBack, selectedLot }) {
                         onClick={onBack}
                         class="text-white"
                     >
-                        <ArrowLeftIcon class="h-4 w-4" />
+                        <ArrowLeft />
                     </button>
                     <span class="ml-2 text-lg font-semibold text-white">Navigation</span>
                 </div>
