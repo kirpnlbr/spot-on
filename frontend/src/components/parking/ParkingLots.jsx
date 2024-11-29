@@ -1,6 +1,7 @@
 function ParkingLots({ onSelectLot, parkingLots }) {
     return (
         <div class="flex-1">
+
             {parkingLots.map((lot) => (
                 <div
                     key={lot.id}

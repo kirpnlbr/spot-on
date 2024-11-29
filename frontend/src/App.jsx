@@ -3,6 +3,7 @@ import ParkingLotsPage from "./pages/ParkingLotsPage";
 import ParkingGridPage from "./pages/ParkingGridPage";
 import NavigationPage from "./pages/NavigationPage";
 import LocationPage from "./pages/LocationPage";
+import BottomNav from './components/shared/BottomNav';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('location');
@@ -42,7 +43,7 @@ function App() {
   };
 
   return (
-    <div class="max-w-sm font-lexend bg-[#F2EFE9] mx-auto h-screen">
+    <div class="max-w-sm font-lexend bg-[#F2EFE9] mx-auto h-screen pb-16">
       {/* Location Page */}
       {currentPage === 'location' && (
         <LocationPage
@@ -76,9 +77,11 @@ function App() {
           onBack={handleBackToGrid}
         />
       )}
+
+      <BottomNav />
+
     </div>
   );
 }
-
 
 export default App;
