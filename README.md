@@ -12,7 +12,8 @@ SpotOn: Spot on parking, every time. A data structures &amp; algorithms project 
 - React
 - TailwindCSS
 
-# Backend setup
+# Set-up development server
+## Backend
 ```
 # Create and activate virtual environment
 python -m venv venv
@@ -29,7 +30,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-# Frontend setup
+## Frontend
 ```
 # Install dependencies
 cd frontend
