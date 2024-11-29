@@ -1,0 +1,8 @@
+# Core
+django==4.2.0
+djangorestframework==3.14.0
+django-cors-headers==4.3.0
+
+# Development
+python-dotenv==1.0.0
+black==23.3.0  # Code formatting
