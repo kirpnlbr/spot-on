@@ -47,22 +47,25 @@ class ParkingSimulation:
         self.spot_coordinates = {}
         self.system.parking_lot.spots.clear()  # Clear existing spots
         self.system.parking_lot.levels.clear()  # Clear existing levels
-        self.system.parking_lot.available_spots = ManualPriorityQueue()  # Reset the manual priority queue
+        self.system.parking_lot.available_spots = {}  # Reset the available spots per level
         self.system.parking_lot.vehicle_to_spot.clear()  # Clear any existing vehicle allocations
         self.current_entry_points = {}
         self.nearest_spot_ids = {}
 
         for level in range(self.num_levels):
-            # Randomly generate the number of rows and columns for this level (3-6)
+            # Randomly generate the number of rows and columns for this level (4-7)
             num_rows = random.randint(4, 7)
             num_cols = random.randint(4, 7)
             self.level_layouts[level] = (num_rows, num_cols)
+            self.system.parking_lot.levels[level] = []
             logger.debug(f"Level {level + 1}: {num_rows} rows x {num_cols} columns.")
+            logger.debug(f"Initialized levels: {list(self.level_layouts.keys())}")
+
 
             # Create spots for this level
             rows = [chr(ord('A') + i) for i in range(num_rows)]  # Generate row labels A-F
             spots_config = [
-                (f"L{level+1}-{row}{col}", level, col * 2, (col, i))
+                (f"L{level+1}-{row}{col}", level, 0, (col, i))
                 for i, row in enumerate(rows)
                 for col in range(1, num_cols + 1)
             ]
@@ -83,14 +86,14 @@ class ParkingSimulation:
             perimeter = []
             for j in range(num_cols):
                 # Top perimeter (y = -1)
-                perimeter.append((j, -1))
+                perimeter.append((j + 1, -1))
                 # Bottom perimeter (y = num_rows)
-                perimeter.append((j, num_rows))
+                perimeter.append((j + 1, num_rows))
             for i in range(num_rows):
-                # Left perimeter (x = -1)
-                perimeter.append((-1, i))
-                # Right perimeter (x = num_cols)
-                perimeter.append((num_cols, i))
+                # Left perimeter (x = 0)
+                perimeter.append((0, i))
+                # Right perimeter (x = num_cols + 1)
+                perimeter.append((num_cols + 1, i))
             self.perimeter_points[level] = perimeter
 
             # Set random entry point for this level
@@ -108,9 +111,10 @@ class ParkingSimulation:
                         distance = self.calculate_distance(entry_point, self.spot_coordinates[spot_id])
                         spot.distance_from_entrance = distance
                         # Update the priority queue with new distance
-                        self.system.parking_lot.available_spots.push((distance, spot_id))
+                        self.system.parking_lot.available_spots[level].push((distance, spot_id))
                     else:
                         logger.warning(f"Spot ID '{spot_id}' not found in spots dictionary.")
+
 
     def set_initial_occupancy(self):
         """
@@ -164,10 +168,7 @@ class ParkingSimulation:
                     "id": spot_id,
                     "isOccupied": spot.is_occupied,
                     "level": level + 1,  # Adjust level to be 1-based
-                    "distance": self.system.calculate_distance(
-                        self.current_entry_points.get(level),
-                        self.spot_coordinates.get(spot_id, (0, 0))
-                    ),
+                    "distance": spot.distance_from_entrance,
                     "vehicle_id": spot.vehicle_id,
                 }
                 for spot_id, spot in self.system.parking_lot.spots.items()
@@ -249,11 +250,10 @@ class ParkingSimulation:
             logger.info("No vehicles to remove.")
             return False
         vehicle_id = random.choice(parked_vehicles)
+        spot_id = self.system.vehicle_to_spot.get(vehicle_id)
         success = self.system.remove_vehicle(vehicle_id)
         if success:
             logger.info(f"Vehicle {vehicle_id} has left the parking lot.")
-            # Retrieve the level from the spot to update the nearest spot
-            spot_id = self.system.vehicle_to_spot.get(vehicle_id)
             if spot_id:
                 spot = self.system.parking_lot.spots.get(spot_id)
                 if spot:
@@ -265,7 +265,6 @@ class ParkingSimulation:
             return False
 
     def start_simulation(self, duration_seconds: int = 60, update_interval: float = 1.0, arrival_rate: float = 0.8, departure_rate: float = 0.2):
-    
         if self.is_simulation_running:
             logger.warning("Simulation is already running.")
             return

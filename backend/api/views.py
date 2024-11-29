@@ -15,7 +15,7 @@ parking_lot_manager = ParkingLotManager()
 
 # Add three parking lots with varying levels and multilevel configurations
 for lot in [
-    {"lot_name": "Central Mall Parking", "num_levels": 3, "is_multi_level": True},
+    {"lot_name": "Central Mall Parking", "num_levels": 2, "is_multi_level": True},
     {"lot_name": "SM Southmall Parking", "num_levels": 1, "is_multi_level": False},
     {"lot_name": "Uptown Parking", "num_levels": 2, "is_multi_level": True},
 ]:
@@ -128,6 +128,7 @@ def get_parking_lots(request):
 
     logger.info("Retrieved list of all parking lots.")
     return Response(parking_lots, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
