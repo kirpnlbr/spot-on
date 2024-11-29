@@ -54,18 +54,24 @@ class SpotOnSystem:
         Find the nearest available spot using the manual priority queue for a specific level.
         """
         if level not in self.parking_lot.entry_points:
-            print(f"No entry point set for level {level}.")
+            print(f"No entry point set for level {level + 1}.")
             return None
 
-        while not self.parking_lot.available_spots.is_empty():
-            distance, spot_id = self.parking_lot.available_spots.pop()
+        if level not in self.parking_lot.available_spots:
+            print(f"No available spots for level {level + 1}.")
+            return None
+
+        while not self.parking_lot.available_spots[level].is_empty():
+            distance, spot_id = self.parking_lot.available_spots[level].peek()
             spot = self.parking_lot.spots.get(spot_id)
             if spot and not spot.is_occupied and spot.level == level:
-                print(f"Nearest spot (Priority Queue) for level {level}: {spot_id} at distance {distance:.2f}")
+                print(f"Nearest spot (Priority Queue) for level {level + 1}: {spot_id} at distance {distance:.2f}")
                 return spot_id
             else:
-                print(f"Spot {spot_id} is occupied or not on level {level}. Continuing search.")
-        print(f"No available spots found using Priority Queue for level {level}.")
+                # Remove the spot from the queue if it's occupied or wrong level
+                self.parking_lot.available_spots[level].pop()
+                print(f"Spot {spot_id} is occupied or not on level {level + 1}. Continuing search.")
+        print(f"No available spots found using Priority Queue for level {level + 1}.")
         return None
 
     def find_nearest_spot_bfs(self, level: int) -> Optional[str]:
@@ -73,7 +79,7 @@ class SpotOnSystem:
         Find the nearest available spot using BFS for a specific level.
         """
         if level not in self.parking_lot.entry_points:
-            print(f"No entry point set for level {level}.")
+            print(f"No entry point set for level {level + 1}.")
             return None
 
         entry_point = self.parking_lot.entry_points[level]
@@ -84,14 +90,14 @@ class SpotOnSystem:
 
         while queue:
             current_point = queue.popleft()
-            print(f"BFS visiting point: {current_point} on level {level}")
+            print(f"BFS visiting point: {current_point} on level {level + 1}")
 
             # Check if any spot exists at the current_point and is available
             for spot_id, coord in self.parking_lot.spot_coordinates.items():
                 if coord == current_point:
                     spot = self.parking_lot.spots.get(spot_id)
                     if spot and not spot.is_occupied and spot.level == level:
-                        print(f"Nearest spot (BFS) for level {level}: {spot_id} at {coord}")
+                        print(f"Nearest spot (BFS) for level {level + 1}: {spot_id} at {coord}")
                         return spot_id
 
             # Explore neighboring points
@@ -100,9 +106,9 @@ class SpotOnSystem:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append(neighbor)
-                    print(f"Adding neighbor to queue: {neighbor} on level {level}")
+                    print(f"Adding neighbor to queue: {neighbor} on level {level + 1}")
 
-        print(f"No available spots found using BFS for level {level}.")
+        print(f"No available spots found using BFS for level {level + 1}.")
         return None
 
     def get_neighbors(self, point: Tuple[int, int]) -> List[Tuple[int, int]]:
@@ -168,7 +174,8 @@ class SpotOnSystem:
             spot.vehicle_id = None
             self.vehicle_to_spot.pop(vehicle_id, None)
             distance = spot.distance_from_entrance
-            self.parking_lot.available_spots.push((distance, spot_id))
+            level = spot.level
+            self.parking_lot.available_spots[level].push((distance, spot_id))
             print(f"Spot {spot_id} has been released and is now available.")
             return True
         print(f"Failed to release spot {spot_id}. It may already be vacant.")

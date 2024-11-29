@@ -26,6 +26,14 @@ class ManualPriorityQueue:
         self._heapify_down(0)
         return item
 
+    def peek(self) -> Optional[Tuple[float, str]]:
+        """
+        Return the smallest item from the priority queue without removing it.
+        """
+        if not self.heap:
+            return None
+        return self.heap[0]
+
     def is_empty(self) -> bool:
         """
         Check if the priority queue is empty.
