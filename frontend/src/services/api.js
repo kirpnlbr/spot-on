@@ -1,42 +1,50 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/';
+const API_BASE_URL = 'http://localhost:8000/api'; // Adjust as needed
 
-export const initializeParkingLot = (spots) => {
-  return axios.post(`${API_BASE_URL}initialize/`, spots);
+export const getParkingGrid = (lotName, level) => {
+    const url = `${API_BASE_URL}/parking_grid/${encodeURIComponent(lotName)}/`;
+    return axios.get(url, { params: { level } });
 };
 
-export const parkVehicle = (vehicleId, preferredLevel) => {
-  return axios.post(`${API_BASE_URL}park/`, {
-    vehicle_id: vehicleId,
-    preferred_level: preferredLevel,
-  });
+export const initializeParkingLot = (lotName) => {
+    const url = `${API_BASE_URL}/initialize/${encodeURIComponent(lotName)}/`;
+    return axios.get(url);
 };
 
-export const removeVehicle = (vehicleId) => {
-  return axios.post(`${API_BASE_URL}remove/`, {
-    vehicle_id: vehicleId,
-  });
+export const startSimulation = (lotName, duration_seconds, update_interval, arrival_rate, departure_rate) => {
+    const url = `${API_BASE_URL}/simulation/start/${encodeURIComponent(lotName)}/`;
+    return axios.post(url, {
+        duration_seconds,
+        update_interval,
+        arrival_rate,
+        departure_rate
+    });
 };
 
-export const getStatus = () => {
-  return axios.get(`${API_BASE_URL}status/`);
+export const stopSimulation = (lotName) => {
+    const url = `${API_BASE_URL}/simulation/stop/${encodeURIComponent(lotName)}/`;
+    return axios.post(url);
 };
 
-export const getParkingGrid = async (lotName, level) => {
-  try {
-    console.log(`API call: Fetching parking grid for ${lotName}, Level: ${level}`);
-    const response = await axios.get(`${API_BASE_URL}parking_grid/${encodeURIComponent(lotName)}/?level=${level}`);
-    console.log('Raw API Response:', response); // Debugging
-    return response;
-  } catch (error) {
-    console.error('Error in getParkingGrid API call:', error);
-    throw error;
-  }
+export const parkVehicle = (lotName, vehicle_id, preferred_level) => {
+    const url = `${API_BASE_URL}/park/`;
+    return axios.post(url, {
+        lot_name: lotName,
+        vehicle_id,
+        preferred_level
+    });
 };
 
+export const removeVehicle = (lotName, vehicle_id) => {
+    const url = `${API_BASE_URL}/remove/`;
+    return axios.post(url, {
+        lot_name: lotName,
+        vehicle_id
+    });
+};
 
 export const getParkingLots = () => {
-    return axios.get(`${API_BASE_URL}parking_lots/`);
-  };
-  
+    const url = `${API_BASE_URL}/parking_lots/`;
+    return axios.get(url);
+};

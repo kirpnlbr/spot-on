@@ -10,28 +10,51 @@ function App() {
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
 
+  const handleEnableLocation = () => {
+    setLocationEnabled(true);
+    setCurrentPage('lots');
+  };
+
+  const handleSkipLocation = () => {
+    setCurrentPage('lots');
+  };
+
+  const handleSelectLot = (lot) => {
+    setSelectedLot(lot);
+    setCurrentPage('grid');
+  };
+
+  const handleBackToLots = () => {
+    setCurrentPage('lots');
+  };
+
+  const handleSelectSpot = () => {
+    setCurrentPage('navigation');
+  };
+
+  const handleNavigate = () => {
+    setSelectedSpot('A4');
+    setCurrentPage('navigation');
+  };
+
+  const handleBackToGrid = () => {
+    setCurrentPage('grid');
+  };
+
   return (
     <div class="max-w-sm font-lexend bg-[#F2EFE9] mx-auto h-screen">
       {/* Location Page */}
       {currentPage === 'location' && (
         <LocationPage
-          onEnableLocation={() => {
-            setLocationEnabled(true);
-            setCurrentPage('lots');
-          }}
-          onSkip={() => {
-            setCurrentPage('lots');
-          }}
+          onEnableLocation={handleEnableLocation}
+          onSkip={handleSkipLocation}
         />
       )}
 
       {/* Parking Lots Page */}
       {currentPage === 'lots' && (
         <ParkingLotsPage
-          onSelectLot={(lot) => {
-            setSelectedLot(lot);
-            setCurrentPage('grid');
-          }}
+          onSelectLot={handleSelectLot}
         />
       )}
 
@@ -39,26 +62,23 @@ function App() {
       {currentPage === 'grid' && (
         <ParkingGridPage
           lot={selectedLot}
-          onBack={() => setCurrentPage('lots')}
-          onSelectSpot={() => setCurrentPage('navigation')}
-          onNavigate={() => {
-            setSelectedSpot('A4');
-            setCurrentPage('navigation');
-          }}
+          onBack={handleBackToLots}
+          onSelectSpot={handleSelectSpot}
+          onNavigate={handleNavigate}
         />
       )}
 
-      {/* Navigation Page */}
       {/* Navigation Page */}
       {currentPage === 'navigation' && (
         <NavigationPage
           selectedLot={selectedLot}
           selectedSpot={selectedSpot}
-          onBack={() => setCurrentPage('grid')}
+          onBack={handleBackToGrid}
         />
       )}
     </div>
   );
 }
+
 
 export default App;

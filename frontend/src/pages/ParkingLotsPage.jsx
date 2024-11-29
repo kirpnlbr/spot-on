@@ -7,17 +7,20 @@ function ParkingLotsPage({ onSelectLot }) {
 
     useEffect(() => {
         getParkingLots()
-            .then(response => setParkingData(response.data))
+            .then(response => {
+                console.log("Fetched Parking Lots:", response.data);
+                setParkingData(response.data);
+            })
             .catch(error => console.error("Failed to fetch parking lots:", error));
     }, []);
 
     return (
-        <div class="flex flex-col bg-white min-h-screen">
-            <div class="p-4 shadow-sm border-b">
+        <div className="flex flex-col bg-white min-h-screen">
+            <div className="p-4 shadow-sm border-b">
                 <input
                     type="text"
                     placeholder="Search parking lot..."
-                    class="border-[1.5px] border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
+                    className="border-[1.5px] border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
                 />
             </div>
 
