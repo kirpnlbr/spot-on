@@ -10,7 +10,7 @@ function NavigationPage({ onBack, selectedLot }) {
     return (
         <div class="flex flex-col space-y-4 bg-white min-h-screen">
             {/* Header */}
-            <div class="flex flex-col space-y-6 p-4 border-b shadow-sm bg-blue-700">
+            <div class="flex flex-col space-y-6 p-4 border-b shadow-sm bg-[#068ef1]">
                 <div class="flex items-center">
                     <button
                         onClick={onBack}
@@ -44,7 +44,7 @@ function NavigationPage({ onBack, selectedLot }) {
                     <span class="font-medium text-sm text-gray-500">Estimated time</span>
                     <span class="font-bold text-lg text-gray-800">{spot.estimatedTime}</span>
                 </div>
-                <button class="rounded-xl p-3 bg-blue-700 border-[1.5px] border-blue-500 text-white font-medium w-full hover:bg-blue-600">I've Arrived</button>
+                <button class="rounded-xl p-3 bg-[#068ef1] text-white font-medium w-full">I've Arrived</button>
             </div>
         </div>
     );

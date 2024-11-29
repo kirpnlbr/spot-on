@@ -8,13 +8,13 @@ function ParkingLots({ onSelectLot, parkingLots }) {
                     onClick={() => onSelectLot(lot)}
                 >
                     <a class="flex flex-col gap-1">
-                        <h2 class="font-medium text-gray-900">
+                        <h2 class="font-medium text-gray-800">
                             {lot.name}
                         </h2>
-                        <p class="text-sm text-blue-500">
-                            {lot.distance} <span class="text-gray-500">• {lot.spots}</span>
+                        <p class="text-sm text-[#068ef1]">
+                            {lot.distance} <span class="text-gray-600">• {lot.spots}</span>
                         </p>
-                        <p class="text-sm text-gray-500">
+                        <p class="text-xs mt-3 font-medium bg-[#068ef1] text-white w-24 p-1 rounded-full text-center">
                             {lot.is_multi_level ? `${lot.num_levels} Levels` : 'Single Level'}
                         </p>
                     </a>
