@@ -1,10 +1,11 @@
+# backend/api/views.py
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from datetime import datetime
-from .simulation.engine import ParkingSimulation
 from .core.lotmanager import ParkingLotManager
-from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import random
 
 # Initialize the ParkingLotManager and add multiple parking lots
@@ -33,12 +34,6 @@ parking_lot_manager.add_parking_lot(
 def initialize_parking_lot(request, lot_name):
     """
     Re-initialize a specific parking lot with a new random configuration.
-
-    Args:
-        lot_name (str): The name of the parking lot to initialize.
-
-    Returns:
-        Response: Success or error message.
     """
     simulation = parking_lot_manager.get_parking_lot(lot_name)
     if not simulation:
@@ -57,13 +52,6 @@ def initialize_parking_lot(request, lot_name):
 def get_parking_grid(request, lot_name):
     """
     Retrieve the parking grid for a specific parking lot and level.
-
-    Args:
-        lot_name (str): The name of the parking lot.
-        level (int, optional): The level number to retrieve. Defaults to None.
-
-    Returns:
-        Response: Parking grid data or error message.
     """
     try:
         print(f"Fetching parking grid for lot: {lot_name}")  # Debug log
@@ -100,14 +88,7 @@ def get_parking_grid(request, lot_name):
         grid_data = []
         for lvl, spots in status_data["spots_by_level"].items():
             if backend_level is None or lvl == backend_level:
-                for spot in spots:
-                    grid_data.append({
-                        "id": spot["id"],
-                        "isOccupied": spot["isOccupied"],
-                        "level": spot["level"] + 1,  # Adjusting backend level to match frontend
-                        "distance": spot["distance"],
-                        "vehicle_id": spot["vehicle_id"],
-                    })
+                grid_data.extend(spots)
 
         print(f"Returning filtered grid data for Level {level if level else 'All'}:", grid_data)  # Debug log
 
@@ -129,12 +110,6 @@ def get_parking_grid(request, lot_name):
 def park_vehicle(request):
     """
     Park a vehicle in the nearest available spot within a specified parking lot.
-
-    Args:
-        request (Request): The request object containing 'vehicle_id', 'preferred_level', and 'lot_name'.
-
-    Returns:
-        Response: Spot ID where the vehicle was parked or an error message.
     """
     vehicle_id = request.data.get('vehicle_id')
     preferred_level = request.data.get('preferred_level', 0)
@@ -169,12 +144,6 @@ def park_vehicle(request):
 def remove_vehicle(request):
     """
     Remove a vehicle from its allocated spot within a specified parking lot.
-
-    Args:
-        request (Request): The request object containing 'vehicle_id' and 'lot_name'.
-
-    Returns:
-        Response: Success message or error message.
     """
     vehicle_id = request.data.get('vehicle_id')
     lot_name = request.data.get('lot_name')
@@ -208,12 +177,6 @@ def remove_vehicle(request):
 def get_status(request, lot_name):
     """
     Retrieve the current status of a specific parking lot.
-
-    Args:
-        lot_name (str): The name of the parking lot.
-
-    Returns:
-        Response: Status data or error message.
     """
     simulation = parking_lot_manager.get_parking_lot(lot_name)
     if not simulation:
@@ -231,19 +194,92 @@ def get_status(request, lot_name):
 def get_parking_lots(request):
     """
     Retrieve a list of all parking lots with their details.
-
-    Returns:
-        Response: List of parking lots.
     """
     parking_lots = []
     for lot_name, simulation in parking_lot_manager.parking_lots.items():
+        available_spots = simulation.total_spots - simulation.system.get_total_occupied_spots()
         parking_lots.append({
             "id": lot_name,  # Assuming lot_name is unique; alternatively, use a unique identifier
             "name": lot_name,
             "distance": f"{random.randint(1, 10)} mins away",  # Placeholder; replace with actual data if available
-            "spots": f"{simulation.total_spots - simulation.system.get_total_occupied_spots()} spots",
+            "spots": f"{available_spots} spots",
             "is_multi_level": simulation.is_multi_level,
             "num_levels": simulation.num_levels,
         })
 
     return Response(parking_lots, status=status.HTTP_200_OK)
+
+@csrf_exempt
+@api_view(['POST'])
+def start_simulation(request, lot_name):
+    """
+    Start the simulation for a specific parking lot.
+    """
+    duration_seconds = request.data.get('duration_seconds', 60)
+    update_interval = request.data.get('update_interval', 2.0)
+
+    simulation = parking_lot_manager.get_parking_lot(lot_name)
+    if not simulation:
+        return Response(
+            {"error": f"Parking lot '{lot_name}' not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if simulation.is_simulation_running:
+        return Response(
+            {"message": "Simulation is already running."},
+            status=status.HTTP_200_OK
+        )
+
+    try:
+        parking_lot_manager.start_simulation(lot_name, int(duration_seconds), float(update_interval))
+        return Response(
+            {"message": f"Simulation started for '{lot_name}'."},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        print("Error starting simulation:", str(e))  # Error log
+        return Response(
+            {"error": "Failed to start simulation."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@csrf_exempt
+@api_view(['POST'])
+def stop_simulation(request, lot_name):
+    """
+    Stop the simulation for a specific parking lot.
+    """
+    simulation = parking_lot_manager.get_parking_lot(lot_name)
+    if not simulation:
+        return Response(
+            {"error": f"Parking lot '{lot_name}' not found."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    if not simulation.is_simulation_running:
+        return Response(
+            {"message": "Simulation is not running."},
+            status=status.HTTP_200_OK
+        )
+
+    try:
+        parking_lot_manager.stop_simulation(lot_name)
+        return Response(
+            {"message": f"Simulation stopped for '{lot_name}'."},
+            status=status.HTTP_200_OK
+        )
+    except Exception as e:
+        print("Error stopping simulation:", str(e))  # Error log
+        return Response(
+            {"error": "Failed to stop simulation."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['GET'])
+def is_simulation_running_view(request, lot_name):
+    """
+    Check if the simulation is running for a specific parking lot.
+    """
+    is_running = parking_lot_manager.is_simulation_running(lot_name)
+    return Response({"is_running": is_running}, status=status.HTTP_200_OK)

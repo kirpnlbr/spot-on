@@ -1,4 +1,6 @@
 import random
+import threading
+import time
 from typing import Tuple
 from datetime import datetime
 from ..core.system import SpotOnSystem
@@ -11,10 +13,15 @@ class ParkingSimulation:
         self.level_layouts = {}
         self.system = SpotOnSystem(is_multi_level=is_multi_level)
         self.total_spots = 0
+        self.is_simulation_running = False
+        self.simulation_thread = None
         self.initialize_parking_lot()
 
-
     def initialize_parking_lot(self):
+        self.total_spots = 0
+        self.level_layouts = {}
+        self.system.reset_parking_lot()  # Reset the parking lot
+
         for level in range(self.num_levels):
             # Randomly generate the number of rows and columns for this level (3-6)
             num_rows = random.randint(3, 6)
@@ -47,7 +54,6 @@ class ParkingSimulation:
             spot.vehicle_id = vehicle_id
             self.system.vehicle_to_spot[vehicle_id] = spot_id
 
-
     def get_current_status(self) -> dict:
         total_occupied = sum(
             1 for spot in self.system.parking_lot.spots.values()
@@ -55,19 +61,20 @@ class ParkingSimulation:
         )
 
         # Serialize spots by level
-        spots_by_level = {
-            level: [
+        spots_by_level = {}
+        for level in range(self.num_levels):
+            spots_in_level = [
                 {
                     "id": spot_id,
-                    "isOccupied": self.system.parking_lot.spots[spot_id].is_occupied,
-                    "level": level,
-                    "distance": self.system.parking_lot.spots[spot_id].distance_from_entrance,
-                    "vehicle_id": self.system.parking_lot.spots[spot_id].vehicle_id,
+                    "isOccupied": spot.is_occupied,
+                    "level": level + 1,  # Adjust level to be 1-based
+                    "distance": spot.distance_from_entrance,
+                    "vehicle_id": spot.vehicle_id,
                 }
-                for spot_id in spots
+                for spot_id, spot in self.system.parking_lot.spots.items()
+                if spot.level == level
             ]
-            for level, spots in self.system.parking_lot.levels.items()
-        }
+            spots_by_level[level] = spots_in_level
 
         return {
             'timestamp': datetime.now(),
@@ -77,7 +84,6 @@ class ParkingSimulation:
             'spots_by_level': spots_by_level,
             'level_layouts': self.level_layouts,
         }
-
 
     def simulate_vehicle_arrival(self) -> Tuple[str, bool]:
         vehicle_id = f"V{random.randint(1000, 9999)}"
@@ -91,3 +97,28 @@ class ParkingSimulation:
             return False
         vehicle_id = random.choice(parked_vehicles)
         return self.system.remove_vehicle(vehicle_id)
+
+    def start_simulation(self, duration_seconds: int = 60, update_interval: float = 2.0):
+        if self.is_simulation_running:
+            return
+        self.is_simulation_running = True
+        self.simulation_thread = threading.Thread(target=self.run_simulation, args=(duration_seconds, update_interval))
+        self.simulation_thread.start()
+
+    def run_simulation(self, duration_seconds: int, update_interval: float):
+        start_time = time.time()
+        while self.is_simulation_running and (time.time() - start_time < duration_seconds):
+            if random.random() < 0.7:
+                # Simulate vehicle arrival
+                self.simulate_vehicle_arrival()
+            else:
+                # Simulate vehicle departure
+                self.simulate_vehicle_departure()
+            time.sleep(update_interval)
+        self.is_simulation_running = False
+
+    def stop_simulation(self):
+        self.is_simulation_running = False
+        if self.simulation_thread:
+            self.simulation_thread.join()
+            self.simulation_thread = None

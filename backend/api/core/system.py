@@ -11,6 +11,12 @@ class SpotOnSystem:
         for spot_id, level, distance in spots_config:
             self.parking_lot.add_parking_spot(spot_id, level, distance)
 
+    def reset_parking_lot(self):
+        for spot in self.parking_lot.spots.values():
+            spot.is_occupied = False
+            spot.vehicle_id = None
+        self.vehicle_to_spot.clear()
+
     def park_vehicle(self, vehicle_id: str, preferred_level: int = 0) -> Optional[str]:
         if vehicle_id in self.vehicle_to_spot: # note: should return allocated spot ID if successful and nothin if otherwise
             return None

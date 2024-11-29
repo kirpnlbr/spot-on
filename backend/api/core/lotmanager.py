@@ -13,3 +13,17 @@ class ParkingLotManager:
 
     def get_parking_lot(self, lot_name: str) -> ParkingSimulation:
         return self.parking_lots.get(lot_name)
+
+    def start_simulation(self, lot_name: str, duration_seconds: int = 60, update_interval: float = 2.0):
+        simulation = self.get_parking_lot(lot_name)
+        if simulation:
+            simulation.start_simulation(duration_seconds, update_interval)
+
+    def stop_simulation(self, lot_name: str):
+        simulation = self.get_parking_lot(lot_name)
+        if simulation:
+            simulation.stop_simulation()
+
+    def is_simulation_running(self, lot_name: str) -> bool:
+        simulation = self.get_parking_lot(lot_name)
+        return simulation.is_simulation_running if simulation else False

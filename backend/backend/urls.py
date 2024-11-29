@@ -27,4 +27,8 @@ urlpatterns = [
     path('api/status/<str:lot_name>/', views.get_status, name='get_status'),
     path("api/parking_grid/<str:lot_name>/", views.get_parking_grid, name="get_parking_grid"),
     path('api/parking_lots/', views.get_parking_lots, name='get_parking_lots'),
+    path('api/simulation/start/<str:lot_name>/', views.start_simulation, name='start_simulation'),
+    path('api/simulation/status/<str:lot_name>/', views.is_simulation_running_view, name='is_simulation_running'),
+    path('api/simulation/stop/<str:lot_name>/', views.stop_simulation, name='stop_simulation'),
+    
 ]
