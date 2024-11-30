@@ -4,13 +4,19 @@ SpotOn: Spot on parking, every time. A data structures &amp; algorithms project 
 ## Technologies Used
 ### Backend
 - Django
-- Django REST Framework
 - Data Structures: Hash Tables, Priority Queues
 - Algorithms: BFS, Greedy Algorithm
 
 ### Frontend
 - React
 - TailwindCSS
+- Framer Motion
+
+# Test performance
+```
+cd backend
+python -m memory_profiler api/tests/test_performance.py
+```
 
 # Set-up development server
 ## Backend
@@ -22,9 +28,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 cd backend
 pip install -r requirements.txt
-
-# Setup database
-python manage.py migrate
 
 # Run development server
 python manage.py runserver
