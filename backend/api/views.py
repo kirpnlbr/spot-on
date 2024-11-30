@@ -115,12 +115,13 @@ def get_parking_lots(request):
     for lot_name, simulation in parking_lot_manager.parking_lots.items():
         available_spots = simulation.total_spots - simulation.system.get_total_occupied_spots()
         parking_lots.append({
-            "id": lot_name,  # Assuming lot_name is unique; alternatively, use a unique identifier
+            "id": lot_name,
             "name": lot_name,
-            "distance": f"{random.randint(1, 10)} mins away",  # Placeholder; replace with actual data if available
+            "distance": f"{random.randint(1, 10)} mins away", 
             "spots": f"{available_spots} spots",
             "is_multi_level": simulation.is_multi_level,
             "num_levels": simulation.num_levels,
+            "address": simulation.address
         })
         logger.debug(f"Added parking lot to list: {lot_name}")
 

@@ -17,11 +17,13 @@ class ParkingSimulation:
         lot_name: str,
         num_levels: int,
         is_multi_level: bool,
-        occupancy_rate: float = 0.5  # Default occupancy rate of 50%
+        address: str,
+        occupancy_rate: float = 0.6 # Default occupancy rate of 60%
     ):
         self.lot_name = lot_name
         self.is_multi_level = is_multi_level
         self.num_levels = num_levels
+        self.address = address
         self.level_layouts: Dict[int, Tuple[int, int]] = {}
         self.system = SpotOnSystem(is_multi_level=is_multi_level)
         self.system.simulation = self  # Link SpotOnSystem back to this ParkingSimulation

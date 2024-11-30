@@ -9,7 +9,7 @@ class ParkingLotManager:
     def add_parking_lot(self, lot_name: str, num_levels: int, is_multi_level: bool, address: str):
         if lot_name in self.parking_lots:
             raise ValueError(f"Parking lot '{lot_name}' already exists.")
-        simulation = ParkingSimulation(lot_name, num_levels, is_multi_level)
+        simulation = ParkingSimulation(lot_name, num_levels, is_multi_level, address)
         self.parking_lots[lot_name] = simulation
 
     def get_parking_lot(self, lot_name: str) -> Optional[ParkingSimulation]:
