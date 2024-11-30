@@ -11,8 +11,10 @@ function App() {
   const [currentPage, setCurrentPage] = useState('location');
   const [selectedLot, setSelectedLot] = useState(null);
   const [locationEnabled, setLocationEnabled] = useState(false);
-  const [selectedSpot, setSelectedSpot] = useState(null);
   const [direction, setDirection] = useState(1);
+
+  // Added navigationData state to hold the necessary data for navigation
+  const [navigationData, setNavigationData] = useState({});
 
   const changePage = (newPage, transitionDirection) => {
     setDirection(transitionDirection);
@@ -37,12 +39,9 @@ function App() {
     changePage('lots', -1);
   };
 
-  const handleSelectSpot = () => {
-    changePage('navigation', 1);
-  };
-
-  const handleNavigate = () => {
-    setSelectedSpot('A4');
+  const handleNavigate = (nearestSpotId, entryPoint, lotName, selectedLevel) => {
+    // Set navigation data with the parameters received
+    setNavigationData({ nearestSpotId, entryPoint, lotName, selectedLevel });
     changePage('navigation', 1);
   };
 
@@ -51,7 +50,7 @@ function App() {
   };
 
   return (
-    <div class="max-w-sm font-geist bg-white mx-auto h-screen pb-16 relative overflow-hidden">
+    <div className="max-w-sm font-geist bg-white mx-auto h-screen pb-16 relative overflow-hidden">
       <AnimatePresence mode="wait" initial={false}>
         {currentPage === 'location' && (
           <PageTransition key="location" direction={direction}>
@@ -75,7 +74,6 @@ function App() {
             <ParkingGridPage
               lot={selectedLot}
               onBack={handleBackToLots}
-              onSelectSpot={handleSelectSpot}
               onNavigate={handleNavigate}
             />
           </PageTransition>
@@ -84,9 +82,12 @@ function App() {
         {currentPage === 'navigation' && (
           <PageTransition key="navigation" direction={direction}>
             <NavigationPage
-              selectedLot={selectedLot}
-              selectedSpot={selectedSpot}
               onBack={handleBackToGrid}
+              // Passed the navigationData to NavigationPage
+              nearestSpotId={navigationData.nearestSpotId}
+              entryPoint={navigationData.entryPoint}
+              lotName={navigationData.lotName}
+              selectedLevel={navigationData.selectedLevel}
             />
           </PageTransition>
         )}

@@ -27,7 +27,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                 }
 
                 // Set nearest spot ID
-                if (response.data.nearest_spot_id) {
+                if (response.data.nearest_spot_id && response.data.nearest_spot_id !== "N/A") {
                     setNearestSpotId(response.data.nearest_spot_id);
                 } else {
                     setNearestSpotId(null);
@@ -35,7 +35,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                 }
 
                 // Set entry point
-                if (response.data.entry_point) {
+                if (response.data.entry_point && Array.isArray(response.data.entry_point)) {
                     setEntryPoint(response.data.entry_point);
                 } else {
                     setEntryPoint(null);
@@ -58,17 +58,9 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             });
     };
 
-    // Effect to handle lot changes: initialize level, start simulation, and set up polling
+    // Effect to handle lot changes
     useEffect(() => {
         if (lot) {
-            // Set selectedLevel to 1 if not multi-level or if current level exceeds available levels
-            if (!lot.is_multi_level || (levels.length > 0 && selectedLevel > levels.length)) {
-                setSelectedLevel(1);
-            }
-
-            // Fetch initial parking grid data
-            fetchParkingGrid();
-
             // Start the simulation when the page loads
             startSimulation(lot.name)
                 .then(response => {
@@ -78,12 +70,15 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     console.error('Failed to start simulation:', error);
                 });
 
+            // Fetch initial parking grid data
+            fetchParkingGrid();
+
             // Set up polling to fetch parking grid data every 2 seconds
             const intervalId = setInterval(() => {
                 fetchParkingGrid();
             }, 2000);
 
-            // Cleanup function to stop simulation and clear interval when the component unmounts or lot changes
+            // Cleanup function to stop simulation when the component unmounts
             return () => {
                 stopSimulation(lot.name)
                     .then(response => {
@@ -97,14 +92,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                 clearInterval(intervalId);
             };
         }
-    }, [lot]); // Runs when 'lot' changes
-
-    // Effect to handle level changes: fetch new data when level changes
-    useEffect(() => {
-        if (lot) {
-            fetchParkingGrid();
-        }
-    }, [selectedLevel]); // Runs when 'selectedLevel' changes
+    }, [lot, selectedLevel]); // Added selectedLevel to dependencies
 
     return (
         <div className="flex flex-col space-y-4 h-screen overflow-y-auto pb-24">
@@ -124,7 +112,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                             className="absolute inset-[4px] bg-white rounded-md"
                             initial={false}
                             animate={{
-                                x: `calc(${selectedLevel - 1} * (100% - 8px + 8px))`,
+                                x: `calc(${selectedLevel - 1} * (100% / ${levels.length}))`,
                                 width: `calc((100% - 8px) / ${levels.length})`
                             }}
                             transition={{
@@ -169,7 +157,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     <button
                         onClick={() => {
                             if (nearestSpotId && entryPoint) {
-                                onNavigate(nearestSpotId, entryPoint);
+                                onNavigate(nearestSpotId, entryPoint, lot.name, selectedLevel);
                             } else {
                                 alert('No available spot to navigate.');
                             }
@@ -194,6 +182,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             </div>
         </div>
     );
+
 }
 
 export default ParkingGridPage;
