@@ -1,5 +1,5 @@
 import time
-import sys
+import random
 from memory_profiler import profile
 from api.core.parking import ParkingLot
 from typing import Tuple, List, Dict
@@ -34,24 +34,9 @@ class PerformanceTest:
             for i in range(spots_in_corridor):
                 x = i * dx
                 y = i * dy
-                distance = math.sqrt(x*x + y*y)
+                distance = math.sqrt(x * x + y * y)
                 spots.append((f"S{spot_index}", 0, distance, (x, y)))
                 spot_index += 1
-
-        return spots
-
-    def create_grid_layout(self, size: int) -> List[Tuple[str, int, float, Tuple[int, int]]]:
-        """Creates spots in a grid pattern."""
-        spots = []
-        grid_size = int(math.sqrt(size))
-        spot_index = 0
-
-        for i in range(grid_size):
-            for j in range(grid_size):
-                if spot_index < size:
-                    distance = math.sqrt(i*i + j*j)
-                    spots.append((f"S{spot_index}", 0, distance, (i, j)))
-                    spot_index += 1
 
         return spots
 
@@ -59,24 +44,47 @@ class PerformanceTest:
         """Creates spots across multiple levels with corridors on each level."""
         spots = []
         spots_per_level = size // num_levels
-        
+
         for level in range(num_levels):
             level_spots = self.create_corridor_layout(spots_per_level)
-            spots.extend([(f"L{level}S{i}", level, d, coord) 
-                         for i, (_, _, d, coord) in enumerate(level_spots)])
-        
+            spots.extend([(f"L{level}S{i}", level, d, coord)
+                          for i, (_, _, d, coord) in enumerate(level_spots)])
+
         return spots
 
+    def simulate_arrivals(self, lot: ParkingLot, num_operations: int, arrival_rate: float) -> None:
+        """Simulate vehicle arrivals."""
+        for _ in range(int(num_operations * arrival_rate)):
+            spot_id = random.choice(list(lot.spots.keys()))
+            spot = lot.spots.get(spot_id)
+            if spot and not spot.is_occupied:
+                spot.is_occupied = True
+
+    def simulate_departures(self, lot: ParkingLot, num_operations: int, departure_rate: float) -> None:
+        """Simulate vehicle departures."""
+        occupied_spots = [spot_id for spot_id, spot in lot.spots.items() if spot.is_occupied]
+        for _ in range(int(num_operations * departure_rate)):
+            if occupied_spots:
+                spot_id = random.choice(occupied_spots)
+                spot = lot.spots.get(spot_id)
+                if spot:
+                    spot.is_occupied = False
+                    occupied_spots.remove(spot_id)
+
     @measure_time
-    def test_priority_queue_single_level(self, size: int, entry_point: str = "corner") -> None:
+    def test_priority_queue_single_level(self, size: int, arrival_rate: float, departure_rate: float, num_operations: int) -> None:
         """Test PQ performance with corridor layout."""
         lot = ParkingLot(is_multi_level=False)
-        lot.set_entry_point(0, self.entry_points[entry_point])
+        lot.set_entry_point(0, self.entry_points["corner"])
 
         # Add spots in corridor pattern
         spots = self.create_corridor_layout(size)
         for spot_id, level, distance, coordinate in spots:
             lot.add_parking_spot(spot_id, level, distance, coordinate)
+
+        # Simulate arrivals and departures
+        self.simulate_arrivals(lot, num_operations, arrival_rate)
+        self.simulate_departures(lot, num_operations, departure_rate)
 
         # Find nearest spot
         nearest_spot = lot.find_nearest_spot_priority_queue(0)
@@ -84,10 +92,10 @@ class PerformanceTest:
 
     @measure_time
     @profile
-    def test_bfs_multi_level(self, size: int, num_levels: int = 3) -> None:
+    def test_bfs_multi_level(self, size: int, num_levels: int, arrival_rate: float, departure_rate: float, num_operations: int) -> None:
         """Test BFS performance with multi-level corridor layout."""
         lot = ParkingLot(is_multi_level=True)
-        
+
         # Set entry points for each level
         for level in range(num_levels):
             lot.set_entry_point(level, self.entry_points["corner"])
@@ -96,6 +104,10 @@ class PerformanceTest:
         spots = self.create_multi_level_layout(size, num_levels)
         for spot_id, level, distance, coordinate in spots:
             lot.add_parking_spot(spot_id, level, distance, coordinate)
+
+        # Simulate arrivals and departures
+        self.simulate_arrivals(lot, num_operations, arrival_rate)
+        self.simulate_departures(lot, num_operations, departure_rate)
 
         # Test finding nearest spot on each level
         for level in range(num_levels):
@@ -106,19 +118,21 @@ class PerformanceTest:
     def run_tests(self) -> None:
         print("\nTesting Single-Level Priority Queue Implementation:")
         print("=" * 50)
-        
+
+        arrival_rate = 0.7
+        departure_rate = 0.3
+        num_operations = 1000  # Total number of operations to simulate
+
         for size in self.test_sizes:
             print(f"\nTesting with {size} spots:")
-            for entry_point in self.entry_points.keys():
-                print(f"\nEntry point: {entry_point}")
-                self.test_priority_queue_single_level(size, entry_point)
+            self.test_priority_queue_single_level(size, arrival_rate, departure_rate, num_operations)
 
         print("\nTesting Multi-Level BFS Implementation:")
         print("=" * 50)
-        
+
         for size in self.test_sizes:
             print(f"\nTesting with {size} total spots:")
-            self.test_bfs_multi_level(size)
+            self.test_bfs_multi_level(size, num_levels=3, arrival_rate=arrival_rate, departure_rate=departure_rate, num_operations=num_operations)
 
 if __name__ == "__main__":
     tester = PerformanceTest()
