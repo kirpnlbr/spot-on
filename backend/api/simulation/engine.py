@@ -18,7 +18,7 @@ class ParkingSimulation:
         num_levels: int,
         is_multi_level: bool,
         address: str,
-        occupancy_rate: float = 0.6 # Default occupancy rate of 60%
+        occupancy_rate: float = 0.6  # Default occupancy rate of 60%
     ):
         self.lot_name = lot_name
         self.is_multi_level = is_multi_level
@@ -55,14 +55,14 @@ class ParkingSimulation:
         self.nearest_spot_ids = {}
 
         for level in range(self.num_levels):
-            # Randomly generate the number of rows and columns for this level (3-6)
+            # Randomly generate the number of rows and columns for this level (4-7)
             num_rows = random.randint(4, 7)
             num_cols = random.randint(4, 7)
             self.level_layouts[level] = (num_rows, num_cols)
             logger.debug(f"Level {level + 1}: {num_rows} rows x {num_cols} columns.")
 
             # Create spots for this level
-            rows = [chr(ord('A') + i) for i in range(num_rows)]  # Generate row labels A-F
+            rows = [chr(ord('A') + i) for i in range(num_rows)]  # Generate row labels A-G
             spots_config = [
                 (f"L{level+1}-{row}{col}", level, col * 2, (col, i))
                 for i, row in enumerate(rows)
@@ -266,15 +266,34 @@ class ParkingSimulation:
             logger.warning(f"Failed to remove vehicle {vehicle_id}.")
             return False
 
-    def start_simulation(self, duration_seconds: int = 60, update_interval: float = 1.0, arrival_rate: float = 0.7, departure_rate: float = 0.3):
-    
+    def start_simulation(
+        self,
+        duration_seconds: Optional[int] = None,
+        update_interval: Optional[float] = None,
+        arrival_rate: Optional[float] = None,
+        departure_rate: Optional[float] = None
+    ):
         if self.is_simulation_running:
             logger.warning("Simulation is already running.")
             return
+
+        # Apply default values if parameters are None
+        if duration_seconds is None:
+            duration_seconds = 60
+        if update_interval is None:
+            update_interval = 1.0
+        if arrival_rate is None:
+            arrival_rate = 0.7
+        if departure_rate is None:
+            departure_rate = 0.3
+
         self.is_simulation_running = True
-        self.simulation_thread = threading.Thread(target=self.run_simulation, args=(duration_seconds, update_interval, arrival_rate, departure_rate))
+        self.simulation_thread = threading.Thread(
+            target=self.run_simulation,
+            args=(duration_seconds, update_interval, arrival_rate, departure_rate)
+        )
         self.simulation_thread.start()
-        logger.info("Simulation started.")
+        logger.info(f"Simulation started with duration {duration_seconds} seconds, update interval {update_interval} seconds, arrival rate {arrival_rate}, departure rate {departure_rate}.")
 
     def run_simulation(self, duration_seconds: int, update_interval: float, arrival_rate: float, departure_rate: float):
         """

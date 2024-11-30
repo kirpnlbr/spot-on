@@ -13,8 +13,8 @@ parking_lot_manager = ParkingLotManager()
 
 for lot in [
     {"lot_name": "Central Square", "num_levels": 2, "is_multi_level": True, "address": "Central Square 5th Avenue cor. 30th Street Bonifacio Global City, Taguig"},
-    {"lot_name": "SM Aura", "num_levels": 1, "is_multi_level": False, "address":"26th Street corner McKinley Parkway, Bonifacio Global City, Taguig"},
-    {"lot_name": "Uptown Place Mall", "num_levels": 2, "is_multi_level": True, "address":"9th Ave. corner 36th St., Uptown Bonifacio, The Fort, Taguig"},
+    {"lot_name": "SM Aura", "num_levels": 1, "is_multi_level": False, "address": "26th Street corner McKinley Parkway, Bonifacio Global City, Taguig"},
+    {"lot_name": "Uptown Place Mall", "num_levels": 2, "is_multi_level": True, "address": "9th Ave. corner 36th St., Uptown Bonifacio, The Fort, Taguig"},
 ]:
     try:
         parking_lot_manager.add_parking_lot(
@@ -117,7 +117,7 @@ def get_parking_lots(request):
         parking_lots.append({
             "id": lot_name,
             "name": lot_name,
-            "distance": f"{random.randint(1, 10)} mins away", 
+            "distance": f"{random.randint(1, 10)} mins away",
             "spots": f"{available_spots} spots",
             "is_multi_level": simulation.is_multi_level,
             "num_levels": simulation.num_levels,
@@ -232,10 +232,10 @@ def start_simulation(request, lot_name):
     """
     Start the simulation for a specific parking lot.
     """
-    duration_seconds = request.data.get('duration_seconds', 60)
-    update_interval = request.data.get('update_interval', 2)
-    arrival_rate = request.data.get('arrival_rate', 0.5)
-    departure_rate = request.data.get('departure_rate', 0.5)
+    duration_seconds = request.data.get('duration_seconds')
+    update_interval = request.data.get('update_interval')
+    arrival_rate = request.data.get('arrival_rate')
+    departure_rate = request.data.get('departure_rate')
 
     simulation = parking_lot_manager.get_parking_lot(lot_name)
     if not simulation:
@@ -245,16 +245,34 @@ def start_simulation(request, lot_name):
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # Validate rates before starting the simulation
+    # Convert and validate parameters
     try:
-        arrival_rate = float(arrival_rate)
-        departure_rate = float(departure_rate)
-        if not (0 <= arrival_rate <= 1) or not (0 <= departure_rate <= 1):
-            raise ValueError("Rates must be between 0 and 1.")
-        if arrival_rate + departure_rate > 1:
-            raise ValueError("The sum of arrival_rate and departure_rate must not exceed 1.")
+        if duration_seconds is not None:
+            duration_seconds = int(duration_seconds)
+            if duration_seconds <= 0:
+                raise ValueError("duration_seconds must be a positive integer.")
+
+        if update_interval is not None:
+            update_interval = float(update_interval)
+            if update_interval <= 0:
+                raise ValueError("update_interval must be a positive number.")
+
+        if arrival_rate is not None:
+            arrival_rate = float(arrival_rate)
+            if not (0 <= arrival_rate <= 1):
+                raise ValueError("arrival_rate must be between 0 and 1.")
+
+        if departure_rate is not None:
+            departure_rate = float(departure_rate)
+            if not (0 <= departure_rate <= 1):
+                raise ValueError("departure_rate must be between 0 and 1.")
+
+        if arrival_rate is not None and departure_rate is not None:
+            if arrival_rate + departure_rate > 1:
+                raise ValueError("The sum of arrival_rate and departure_rate must not exceed 1.")
+
     except ValueError as ve:
-        logger.error(f"Rate validation error: {str(ve)}")
+        logger.error(f"Parameter validation error: {str(ve)}")
         return Response(
             {"error": str(ve)},
             status=status.HTTP_400_BAD_REQUEST
@@ -267,15 +285,17 @@ def start_simulation(request, lot_name):
             status=status.HTTP_200_OK
         )
 
-    # Optionally, update the rates before starting the simulation
-    simulation.arrival_rate = arrival_rate
-    simulation.departure_rate = departure_rate
-
     try:
-        parking_lot_manager.start_simulation(lot_name, int(duration_seconds), float(update_interval))
-        logger.info(f"Started simulation for lot '{lot_name}' with arrival_rate={arrival_rate} and departure_rate={departure_rate}.")
+        # Start the simulation with provided parameters; defaults are handled in engine.py
+        simulation.start_simulation(
+            duration_seconds=duration_seconds,
+            update_interval=update_interval,
+            arrival_rate=arrival_rate,
+            departure_rate=departure_rate
+        )
+        logger.info(f"Started simulation for lot '{lot_name}' with provided parameters.")
         return Response(
-            {"message": f"Simulation started for '{lot_name}' with arrival_rate={arrival_rate} and departure_rate={departure_rate}."},
+            {"message": f"Simulation started for '{lot_name}'."},
             status=status.HTTP_200_OK
         )
     except Exception as e:
