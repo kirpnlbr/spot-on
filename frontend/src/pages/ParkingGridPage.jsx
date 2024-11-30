@@ -95,21 +95,21 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
     }, [lot, selectedLevel]); // Added selectedLevel to dependencies
 
     return (
-        <div className="flex flex-col space-y-4 h-screen overflow-y-auto pb-24">
+        <div class="flex flex-col space-y-4 h-screen overflow-y-auto pb-24">
             {/* Header */}
-            <div className="bg-white flex p-4 items-center border-b shadow-sm">
-                <button onClick={onBack} className="hover:bg-gray-800/10 p-2 rounded-full transition-colors">
+            <div class="bg-white flex p-4 items-center border-b shadow-sm">
+                <button onClick={onBack} class="hover:bg-gray-800/10 p-2 rounded-full transition-colors">
                     <ArrowLeft />
                 </button>
-                <span className="ml-2 text-lg font-semibold text-gray-900">{lot.name}</span>
+                <span class="ml-2 text-lg font-semibold text-gray-900">{lot.name}</span>
             </div>
 
             {/* Level Selector */}
             {lot.is_multi_level && (
-                <div className="px-5 mb-4">
-                    <div className="flex p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm">
+                <div class="px-5 mb-4">
+                    <div class="flex p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm">
                         <motion.div
-                            className="absolute inset-[4px] bg-white rounded-md"
+                            class="absolute inset-[4px] bg-white rounded-md"
                             initial={false}
                             animate={{
                                 x: selectedLevel === 2 ? 'calc(100% - 8px)' : '0%',
@@ -125,7 +125,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                             <motion.button
                                 key={level}
                                 onClick={() => setSelectedLevel(level)}
-                                className={`relative flex-1 px-4 py-1.5 font-medium text-sm rounded-md whitespace-nowrap ${selectedLevel === level
+                                class={`relative flex-1 px-4 py-1.5 font-medium text-sm rounded-md whitespace-nowrap ${selectedLevel === level
                                     ? 'text-[#068ef1]'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
@@ -140,19 +140,19 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
 
 
             {/* Parking Grid */}
-            <div className="bg-white mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
+            <div class="bg-white mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
                 {isLoading ? (
-                    <div className="text-center text-gray-500">Loading parking grid...</div>
+                    <div class="text-center text-gray-500">Loading parking grid...</div>
                 ) : (
                     <ParkingGrid parkingGrid={parkingGrid} nearestSpotId={nearestSpotId} />
                 )}
             </div>
 
             {/* Navigate to Spot */}
-            <div className="mx-3 p-4 rounded-xl bg-[#d3e4f0] shadow-sm">
-                <div className="flex flex-col">
-                    <span className="font-medium text-sm text-gray-600">Nearest spot found!</span>
-                    <span className="font-bold text-xl text-gray-800 pb-4">
+            <div class="mx-3 p-4 rounded-xl bg-[#d3e4f0] shadow-sm">
+                <div class="flex flex-col">
+                    <span class="font-medium text-sm text-gray-600">Nearest spot found!</span>
+                    <span class="font-bold text-xl text-gray-800 pb-4">
                         {nearestSpotId ? nearestSpotId.split('-')[1] : 'N/A'}
                     </span>
                     <button
@@ -163,7 +163,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                                 alert('No available spot to navigate.');
                             }
                         }}
-                        className={`rounded-xl p-3 text-white font-medium w-full active:scale-95 transition
+                        class={`rounded-xl p-3 text-white font-medium w-full active:scale-95 transition
                             ${nearestSpotId
                                 ? 'bg-[#068ef1] hover:bg-[#1F9FFC]'
                                 : 'bg-gray-400 cursor-not-allowed'
@@ -175,7 +175,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     </button>
 
                     {/* Debug Information */}
-                    <div className="mt-4 text-xs text-gray-400">
+                    <div class="mt-4 text-xs text-gray-400">
                         <p>Nearest Spot ID: {nearestSpotId || 'N/A'}</p>
                         <p>Entry Point: {entryPoint ? `(${entryPoint[0]}, ${entryPoint[1]})` : 'N/A'}</p>
                     </div>
