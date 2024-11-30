@@ -21,21 +21,18 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
         }
     };
 
-    // Function to fetch parking grid data
     const fetchParkingGrid = () => {
         setIsLoading(true);
         getParkingGrid(lot.name, selectedLevel)
             .then(response => {
                 console.log('Parking grid data:', response.data);
 
-                // Set parking grid if available
                 if (response.data.spots) {
                     setParkingGrid(response.data.spots);
                 } else {
                     console.error('No spots key in API response:', response.data);
                 }
 
-                // Set nearest spot ID
                 if (response.data.nearest_spot_id && response.data.nearest_spot_id !== "N/A") {
                     setNearestSpotId(response.data.nearest_spot_id);
                 } else {
@@ -43,7 +40,6 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     console.warn('No nearest_spot_id in API response.');
                 }
 
-                // Set entry point
                 if (response.data.entry_point && Array.isArray(response.data.entry_point)) {
                     setEntryPoint(response.data.entry_point);
                 } else {
@@ -51,7 +47,6 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     console.warn('No entry_point in API response.');
                 }
 
-                // Update levels based on the parking lot's number of levels
                 if (response.data.level_layouts) {
                     const numLevels = Object.keys(response.data.level_layouts).length;
                     setLevels(Array.from({ length: numLevels }, (_, i) => i + 1));
@@ -68,10 +63,9 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
     };
 
 
-    // Effect to handle lot changes
     useEffect(() => {
         if (lot) {
-            // Start the simulation when the page loads
+
             startSimulation(lot.name)
                 .then(response => {
                     console.log('Simulation started:', response.data);
@@ -80,15 +74,12 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     console.error('Failed to start simulation:', error);
                 });
 
-            // Fetch initial parking grid data
             fetchParkingGrid();
 
-            // Set up polling to fetch parking grid data every 2 seconds
             const intervalId = setInterval(() => {
                 fetchParkingGrid();
             }, 2000);
 
-            // Cleanup function to stop simulation when the component unmounts
             return () => {
                 stopSimulation(lot.name)
                     .then(response => {
@@ -98,11 +89,10 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                         console.error('Failed to stop simulation:', error);
                     });
 
-                // Clear the interval
                 clearInterval(intervalId);
             };
         }
-    }, [lot, selectedLevel]); // Added selectedLevel to dependencies
+    }, [lot, selectedLevel]);
 
     return (
         <div class="flex flex-col space-y-4 h-screen overflow-y-auto pb-24">

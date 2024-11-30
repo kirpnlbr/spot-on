@@ -13,7 +13,6 @@ function App() {
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [direction, setDirection] = useState(1);
 
-  // Added navigationData state to hold the necessary data for navigation
   const [navigationData, setNavigationData] = useState({});
 
   const changePage = (newPage, transitionDirection) => {
@@ -40,7 +39,6 @@ function App() {
   };
 
   const handleNavigate = (nearestSpotId, entryPoint, lotName, selectedLevel) => {
-    // Set navigation data with the parameters received
     setNavigationData({ nearestSpotId, entryPoint, lotName, selectedLevel });
     changePage('navigation', 1);
   };
@@ -83,7 +81,6 @@ function App() {
           <PageTransition key="navigation" direction={direction}>
             <NavigationPage
               onBack={handleBackToGrid}
-              // Passed the navigationData to NavigationPage
               nearestSpotId={navigationData.nearestSpotId}
               entryPoint={navigationData.entryPoint}
               lotName={navigationData.lotName}

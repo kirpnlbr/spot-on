@@ -1,21 +1,18 @@
-from typing import Dict, List, Optional, Tuple
 from .models import ParkingSpot
 from .manual_priority_queue import ManualPriorityQueue
 import math
 
 class ParkingLot:
-    def __init__(self, is_multi_level: bool = False):
+    def __init__(self, is_multi_level=False):
         self.is_multi_level = is_multi_level
-        self.spots: Dict[str, ParkingSpot] = {}
-        self.available_spots: ManualPriorityQueue = ManualPriorityQueue()
-        self.levels: Dict[int, List[str]] = {}
-        self.entry_points: Dict[int, Tuple[int, int]] = {}  # Entry point per level
-        self.vehicle_to_spot: Dict[str, str] = {}  # vehicle_id to spot_id
-        self.spot_coordinates: Dict[str, Tuple[int, int]] = {}  # Map of spot_id to (x, y)
-        self.coord_to_spot_id: Dict[Tuple[int, Tuple[int, int]], str] = {}  # Map of (level, coord) to spot_id
+        self.spots = {}
+        self.available_spots = ManualPriorityQueue()
+        self.levels = {}
+        self.entry_points = {}  # Entry point per level
+        self.vehicle_to_spot = {}  # vehicle_id to spot_id
+        self.spot_coordinates = {}  # Map of spot_id to (x, y)
 
-
-    def add_parking_spot(self, spot_id: str, level: int, distance: Optional[float], coordinate: Tuple[int, int]) -> None:
+    def add_parking_spot(self, spot_id, level, distance, coordinate):
         if spot_id in self.spots:
             raise ValueError(f"Spot ID '{spot_id}' already exists.")
 
@@ -25,7 +22,6 @@ class ParkingLot:
         spot = ParkingSpot(id=spot_id, level=level, distance_from_entrance=distance)
         self.spots[spot_id] = spot
         self.spot_coordinates[spot_id] = coordinate
-        self.coord_to_spot_id[(level, coordinate)] = spot_id
 
         if level not in self.levels:
             self.levels[level] = []
@@ -35,15 +31,11 @@ class ParkingLot:
         if not spot.is_occupied and distance != float('inf'):
             self.available_spots.push((distance, spot_id))
 
-    def set_entry_point(self, level: int, entry_point: Tuple[int, int]) -> None:
+    def set_entry_point(self, level, entry_point):
         self.entry_points[level] = entry_point
 
-
-
-    def find_nearest_spot_priority_queue(self, level: int) -> Optional[str]:
-        """
-        Find the nearest available spot using the manual priority queue for a specific level.
-        """
+    def find_nearest_spot_priority_queue(self, level):
+        # Find the nearest available spot using the manual priority queue for a specific level.
         if level not in self.entry_points:
             print(f"No entry point set for level {level}.")
             return None
@@ -59,10 +51,8 @@ class ParkingLot:
         print(f"No available spots found using Priority Queue for level {level}.")
         return None
 
-    def find_nearest_spot_bfs(self, level: int) -> Optional[str]:
-        """
-        Find the nearest available spot using BFS for a specific level.
-        """
+    def find_nearest_spot_bfs(self, level):
+        # Find the nearest available spot using BFS for a specific level
         if level not in self.entry_points:
             print(f"No entry point set for level {level}.")
             return None
@@ -96,10 +86,8 @@ class ParkingLot:
         print(f"No available spots found using BFS for level {level}.")
         return None
 
-    def get_neighbors(self, point: Tuple[int, int]) -> List[Tuple[int, int]]:
-        """
-        Get adjacent points (up, down, left, right).
-        """
+    def get_neighbors(self, point):
+        # Get adjacent points (up, down, left, right).
         if not isinstance(point, tuple) or len(point) != 2:
             print(f"Invalid point format: {point}. Expected a tuple of two integers.")
             return []
@@ -112,10 +100,8 @@ class ParkingLot:
         ]
         return neighbors
 
-    def calculate_distance(self, point1: Tuple[int, int], point2: Tuple[int, int]) -> float:
-        """
-        Calculate Euclidean distance between two points.
-        """
+    def calculate_distance(self, point1, point2):
+        # Calculate Euclidean distance between two points.
         if not isinstance(point1, tuple) or not isinstance(point2, tuple):
             print(f"Invalid points format: {point1}, {point2}. Expected tuples of two integers.")
             return float('inf')
