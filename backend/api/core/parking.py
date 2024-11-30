@@ -1,7 +1,6 @@
 from typing import Dict, List, Optional, Tuple
 from .models import ParkingSpot
 from .manual_priority_queue import ManualPriorityQueue
-from collections import deque
 import math
 
 class ParkingLot:
@@ -14,18 +13,29 @@ class ParkingLot:
         self.vehicle_to_spot: Dict[str, str] = {}  # vehicle_id to spot_id
         self.spot_coordinates: Dict[str, Tuple[int, int]] = {}  # Map of spot_id to (x, y)
 
-    def add_parking_spot(self, spot_id: str, level: int, distance: float, coordinate: Tuple[int, int]) -> None:
+    def add_parking_spot(self, spot_id: str, level: int, distance: Optional[float], coordinate: Tuple[int, int]) -> None:
+        if spot_id in self.spots:
+            raise ValueError(f"Spot ID '{spot_id}' already exists.")
+
+        if distance is None:
+            distance = float('inf')  # Assign a default large distance if none is provided
+
         spot = ParkingSpot(id=spot_id, level=level, distance_from_entrance=distance)
         self.spots[spot_id] = spot
-        self.available_spots.push((distance, spot_id))
         self.spot_coordinates[spot_id] = coordinate
 
         if level not in self.levels:
             self.levels[level] = []
         self.levels[level].append(spot_id)
 
+        # Only add to available_spots if the spot is not occupied and distance is valid
+        if not spot.is_occupied and distance != float('inf'):
+            self.available_spots.push((distance, spot_id))
+
     def set_entry_point(self, level: int, entry_point: Tuple[int, int]) -> None:
         self.entry_points[level] = entry_point
+
+
 
     def find_nearest_spot_priority_queue(self, level: int) -> Optional[str]:
         """

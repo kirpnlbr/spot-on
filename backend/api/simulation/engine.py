@@ -18,7 +18,7 @@ class ParkingSimulation:
         num_levels: int,
         is_multi_level: bool,
         address: str,
-        occupancy_rate: float = 0.6 # Default occupancy rate of 60%
+        occupancy_rate: float = 0.6  # Default occupancy rate of 60%
     ):
         self.lot_name = lot_name
         self.is_multi_level = is_multi_level
@@ -50,30 +50,32 @@ class ParkingSimulation:
         self.system.parking_lot.spots.clear()  # Clear existing spots
         self.system.parking_lot.levels.clear()  # Clear existing levels
         self.system.parking_lot.available_spots = ManualPriorityQueue()  # Reset the manual priority queue
-        self.system.parking_lot.vehicle_to_spot.clear()  # Clear any existing vehicle allocations
         self.current_entry_points = {}
         self.nearest_spot_ids = {}
+        self.system.parking_lot.spot_coordinates.clear()  # Clear spot coordinates in parking lot
 
         for level in range(self.num_levels):
-            # Randomly generate the number of rows and columns for this level (3-6)
+            # Randomly generate the number of rows and columns for this level (4-7)
             num_rows = random.randint(4, 7)
             num_cols = random.randint(4, 7)
             self.level_layouts[level] = (num_rows, num_cols)
             logger.debug(f"Level {level + 1}: {num_rows} rows x {num_cols} columns.")
 
             # Create spots for this level
-            rows = [chr(ord('A') + i) for i in range(num_rows)]  # Generate row labels A-F
+            rows = [chr(ord('A') + i) for i in range(num_rows)]  # Generate row labels A-G
             spots_config = [
-                (f"L{level+1}-{row}{col}", level, col * 2, (col, i))
+                (f"L{level+1}-{row}{col+1}", level, None, (col, i))
                 for i, row in enumerate(rows)
-                for col in range(1, num_cols + 1)
+                for col in range(num_cols)
             ]
 
             # Initialize parking lot with this configuration
-            for spot_id, lvl, distance, coord in spots_config:
+            for spot_id, lvl, _, coord in spots_config:
                 try:
-                    self.system.parking_lot.add_parking_spot(spot_id, lvl, distance, coord)
+                    # Set distance to None; it will be calculated after entry point is set
+                    self.system.parking_lot.add_parking_spot(spot_id, lvl, None, coord)
                     self.spot_coordinates[spot_id] = coord  # Map spot_id to coordinates
+                    self.system.parking_lot.spot_coordinates[spot_id] = coord  # Update in parking lot
                 except ValueError as ve:
                     logger.error(str(ve))
                     continue  # Skip adding this spot if there's an error
@@ -108,9 +110,16 @@ class ParkingSimulation:
                     spot = self.system.parking_lot.spots.get(spot_id)
                     if spot:
                         distance = self.calculate_distance(entry_point, self.spot_coordinates[spot_id])
-                        spot.distance_from_entrance = distance
-                        # Update the priority queue with new distance
-                        self.system.parking_lot.available_spots.push((distance, spot_id))
+                        if distance != float('inf'):
+                            spot.distance_from_entrance = distance
+                            # Now that we have the distance, add the spot to the available_spots queue
+                            if not spot.is_occupied:
+                                success = self.system.parking_lot.available_spots.push((distance, spot_id))
+                                if not success:
+                                    logger.warning(f"Failed to push spot {spot_id} into available_spots.")
+                        else:
+                            spot.distance_from_entrance = float('inf')
+                            logger.warning(f"Spot {spot_id} has invalid distance. Set to infinity.")
                     else:
                         logger.warning(f"Spot ID '{spot_id}' not found in spots dictionary.")
 
@@ -126,7 +135,7 @@ class ParkingSimulation:
 
         for spot_id in spot_ids[:spots_to_occupy]:
             spot = self.system.parking_lot.spots.get(spot_id)
-            if spot and not spot.is_occupied:
+            if spot and not spot.is_occupied and spot.distance_from_entrance != float('inf'):
                 vehicle_id = f"V{random.randint(1000, 9999)}"
                 success = self.system.allocate_spot(vehicle_id, spot_id)
                 if success:
@@ -166,10 +175,7 @@ class ParkingSimulation:
                     "id": spot_id,
                     "isOccupied": spot.is_occupied,
                     "level": level + 1,  # Adjust level to be 1-based
-                    "distance": self.system.calculate_distance(
-                        self.current_entry_points.get(level),
-                        self.spot_coordinates.get(spot_id, (0, 0))
-                    ),
+                    "distance": spot.distance_from_entrance,
                     "vehicle_id": spot.vehicle_id,
                 }
                 for spot_id, spot in self.system.parking_lot.spots.items()
@@ -251,30 +257,54 @@ class ParkingSimulation:
             logger.info("No vehicles to remove.")
             return False
         vehicle_id = random.choice(parked_vehicles)
+        # Retrieve the spot_id and level before removing the vehicle
+        spot_id = self.system.vehicle_to_spot.get(vehicle_id)
+        if not spot_id:
+            logger.warning(f"Vehicle {vehicle_id} not found in vehicle_to_spot.")
+            return False
+        spot = self.system.parking_lot.spots.get(spot_id)
+        if not spot:
+            logger.warning(f"Spot {spot_id} not found in parking_lot.spots.")
+            return False
+        level = spot.level
         success = self.system.remove_vehicle(vehicle_id)
         if success:
             logger.info(f"Vehicle {vehicle_id} has left the parking lot.")
-            # Retrieve the level from the spot to update the nearest spot
-            spot_id = self.system.vehicle_to_spot.get(vehicle_id)
-            if spot_id:
-                spot = self.system.parking_lot.spots.get(spot_id)
-                if spot:
-                    level = spot.level
-                    self.update_nearest_spot(level)
+            # Update nearest spot after vehicle departs
+            self.update_nearest_spot(level)
             return True
         else:
             logger.warning(f"Failed to remove vehicle {vehicle_id}.")
             return False
 
-    def start_simulation(self, duration_seconds: int = 60, update_interval: float = 1.0, arrival_rate: float = 0.7, departure_rate: float = 0.3):
-    
+    def start_simulation(
+        self,
+        duration_seconds: Optional[int] = None,
+        update_interval: Optional[float] = None,
+        arrival_rate: Optional[float] = None,
+        departure_rate: Optional[float] = None
+    ):
         if self.is_simulation_running:
             logger.warning("Simulation is already running.")
             return
+
+        # Apply default values if parameters are None
+        if duration_seconds is None:
+            duration_seconds = 60
+        if update_interval is None:
+            update_interval = 1.0
+        if arrival_rate is None:
+            arrival_rate = 0.7
+        if departure_rate is None:
+            departure_rate = 0.3
+
         self.is_simulation_running = True
-        self.simulation_thread = threading.Thread(target=self.run_simulation, args=(duration_seconds, update_interval, arrival_rate, departure_rate))
+        self.simulation_thread = threading.Thread(
+            target=self.run_simulation,
+            args=(duration_seconds, update_interval, arrival_rate, departure_rate)
+        )
         self.simulation_thread.start()
-        logger.info("Simulation started.")
+        logger.info(f"Simulation started with duration {duration_seconds} seconds, update interval {update_interval} seconds, arrival rate {arrival_rate}, departure rate {departure_rate}.")
 
     def run_simulation(self, duration_seconds: int, update_interval: float, arrival_rate: float, departure_rate: float):
         """
@@ -286,7 +316,7 @@ class ParkingSimulation:
             action = random.random()
             if action < arrival_rate:
                 # Simulate vehicle arrival
-                vehicle_id, success, level = self.simulate_vehicle_arrival()
+                self.simulate_vehicle_arrival()
             elif action < arrival_rate + departure_rate:
                 # Simulate vehicle departure
                 self.simulate_vehicle_departure()
@@ -309,13 +339,14 @@ class ParkingSimulation:
 
     def calculate_distance(self, point1: Tuple[int, int], point2: Tuple[int, int]) -> float:
         """
-        Calculate Euclidean distance between two points.
+        Calculate Manhattan distance between two points.
         """
         if not isinstance(point1, tuple) or not isinstance(point2, tuple):
             logger.error(f"Invalid points format: {point1}, {point2}. Expected tuples of two integers.")
             return float('inf')
         x1, y1 = point1
         x2, y2 = point2
-        distance = math.hypot(x2 - x1, y2 - y1)
+        # Use Manhattan distance for grid-like movement
+        distance = abs(x2 - x1) + abs(y2 - y1)
         logger.debug(f"Calculated distance between {point1} and {point2}: {distance:.2f}")
         return distance
