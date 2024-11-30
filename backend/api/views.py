@@ -12,9 +12,10 @@ logger = logging.getLogger(__name__)
 parking_lot_manager = ParkingLotManager()
 
 for lot in [
-    {"lot_name": "Central Square", "num_levels": 2, "is_multi_level": True, "address": "Central Square 5th Avenue cor. 30th Street Bonifacio Global City, Taguig"},
+    {"lot_name": "Central Square", "num_levels": 5, "is_multi_level": True, "address": "Central Square 5th Avenue cor. 30th Street Bonifacio Global City, Taguig"},
     {"lot_name": "SM Aura", "num_levels": 1, "is_multi_level": False, "address": "26th Street corner McKinley Parkway, Bonifacio Global City, Taguig"},
-    {"lot_name": "Uptown Place Mall", "num_levels": 2, "is_multi_level": True, "address": "9th Ave. corner 36th St., Uptown Bonifacio, The Fort, Taguig"},
+    {"lot_name": "Uptown Place Mall", "num_levels": 3, "is_multi_level": True, "address": "9th Ave. corner 36th St., Uptown Bonifacio, The Fort, Taguig"},
+    {"lot_name": "Mitsukoshi BGC", "num_levels": 2, "is_multi_level": True, "address": "8th Ave. Corner 36th St., Grand Central Park, 7th Avenue, Taguig"},
 ]:
     try:
         parking_lot_manager.add_parking_lot(

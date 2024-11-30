@@ -2,6 +2,7 @@ import random
 import threading
 import time
 import math
+import signal
 from typing import Tuple, Optional, Dict, List
 from datetime import datetime
 from ..core.system import SpotOnSystem
@@ -210,7 +211,7 @@ class ParkingSimulation:
                 "lot_name": lot_name,
                 "level": level + 1,  # Adjusting back to 1-based index for frontend
                 "spots": level_spots,
-                "level_layouts": self.level_layouts.get(level, ()),
+                "level_layouts": self.level_layouts,  # Send the full level_layouts dictionary
                 "nearest_spot_id": self.nearest_spot_ids.get(level, "N/A"),
                 "entry_point": self.current_entry_points.get(level, "N/A"),
             }
@@ -245,6 +246,10 @@ class ParkingSimulation:
                 logger.warning(f"Vehicle {vehicle_id} failed to park at {spot_id} on level {level + 1}.")
         else:
             logger.warning(f"Vehicle {vehicle_id} failed to park on level {level + 1}. No available spots.")
+
+        # Ensure nearest spot is updated even if parking failed
+        self.update_nearest_spot(level)
+
         return vehicle_id, False, level + 1
 
     def simulate_vehicle_departure(self) -> bool:
@@ -312,20 +317,25 @@ class ParkingSimulation:
         """
         start_time = time.time()
         logger.debug(f"Simulation running for {duration_seconds} seconds with update interval {update_interval} seconds.")
-        while self.is_simulation_running and (time.time() - start_time < duration_seconds):
-            action = random.random()
-            if action < arrival_rate:
-                # Simulate vehicle arrival
-                self.simulate_vehicle_arrival()
-            elif action < arrival_rate + departure_rate:
-                # Simulate vehicle departure
-                self.simulate_vehicle_departure()
-            else:
-                # Idle step (no action)
-                logger.debug("No action this interval.")
-            time.sleep(update_interval)
-        self.is_simulation_running = False
-        logger.info("Simulation ended.")
+        try:
+            while self.is_simulation_running and (time.time() - start_time < duration_seconds):
+                action = random.random()
+                if action < arrival_rate:
+                    # Simulate vehicle arrival
+                    self.simulate_vehicle_arrival()
+                elif action < arrival_rate + departure_rate:
+                    # Simulate vehicle departure
+                    self.simulate_vehicle_departure()
+                else:
+                    # Idle step (no action)
+                    logger.debug("No action this interval.")
+                time.sleep(update_interval)
+        except KeyboardInterrupt:
+            logger.info("Simulation interrupted by user.")
+            self.is_simulation_running = False
+        finally:
+            logger.info("Simulation ended.")
+            self.is_simulation_running = False
 
     def stop_simulation(self):
         """
@@ -345,7 +355,7 @@ class ParkingSimulation:
             logger.error(f"Invalid points format: {point1}, {point2}. Expected tuples of two integers.")
             return float('inf')
         x1, y1 = point1
-        x2, y2 = point2
+        x2, y2 = point2  # Corrected this line
         # Use Manhattan distance for grid-like movement
         distance = abs(x2 - x1) + abs(y2 - y1)
         logger.debug(f"Calculated distance between {point1} and {point2}: {distance:.2f}")
