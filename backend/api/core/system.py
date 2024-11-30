@@ -1,6 +1,6 @@
 from .parking import ParkingLot
 from .models import ParkingSpot
-from collections import deque
+from .manual_bfs_queue import ManualBFSQueue  # Importing ManualBFSQueue
 
 class SpotOnSystem:
     def __init__(self, is_multi_level=False):
@@ -73,12 +73,12 @@ class SpotOnSystem:
 
         entry_point = self.parking_lot.entry_points[level]
         visited = set()
-        queue = deque()
-        queue.append(entry_point)
+        queue = ManualBFSQueue()  # Using ManualBFSQueue instead of deque
+        queue.enqueue(entry_point)
         visited.add(entry_point)
 
-        while queue:
-            current_point = queue.popleft()
+        while not queue.is_empty():
+            current_point = queue.dequeue()
             # Check if any spot exists at the current_point and is available
             for spot_id, coord in self.parking_lot.spot_coordinates.items():
                 if coord == current_point:
@@ -92,7 +92,7 @@ class SpotOnSystem:
             for neighbor in neighbors:
                 if neighbor not in visited:
                     visited.add(neighbor)
-                    queue.append(neighbor)
+                    queue.enqueue(neighbor)
                     print(f"Adding neighbor to queue: {neighbor} on level {level}")
 
         print(f"No available spots found using BFS for level {level}.")

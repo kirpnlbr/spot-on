@@ -1,5 +1,6 @@
 from .models import ParkingSpot
 from .manual_priority_queue import ManualPriorityQueue
+from .manual_bfs_queue import ManualBFSQueue  # Importing ManualBFSQueue
 import math
 
 class ParkingLot:
@@ -59,12 +60,12 @@ class ParkingLot:
 
         entry_point = self.entry_points[level]
         visited = set()
-        queue = deque()
-        queue.append(entry_point)
+        queue = ManualBFSQueue()  # Using ManualBFSQueue instead of deque
+        queue.enqueue(entry_point)
         visited.add(entry_point)
 
-        while queue:
-            current_point = queue.popleft()
+        while not queue.is_empty():
+            current_point = queue.dequeue()
             print(f"BFS visiting point: {current_point} on level {level}")
 
             # Check if any spot exists at the current_point and is available
@@ -80,7 +81,7 @@ class ParkingLot:
             for neighbor in neighbors:
                 if neighbor not in visited:
                     visited.add(neighbor)
-                    queue.append(neighbor)
+                    queue.enqueue(neighbor)
                     print(f"Adding neighbor to queue: {neighbor} on level {level}")
 
         print(f"No available spots found using BFS for level {level}.")
