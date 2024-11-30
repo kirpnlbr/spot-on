@@ -1,3 +1,5 @@
+import { CircleParking } from 'lucide-react';
+
 function ParkingLots({ onSelectLot, parkingLots }) {
     return (
         <div class="flex-1">
@@ -9,8 +11,8 @@ function ParkingLots({ onSelectLot, parkingLots }) {
                     onClick={() => onSelectLot(lot)}
                 >
                     <a class="flex flex-col gap-1">
-                        <h2 class="font-medium text-gray-800">
-                            {lot.name}
+                        <h2 class="font-medium text-gray-800 flex items-center">
+                            <CircleParking class="text-gray-400 mr-1.5 h-4 w-4" /> {lot.name}
                         </h2>
                         <p class="text-sm text-[#068ef1]">
                             {lot.distance} <span class="text-gray-600">• {lot.spots}</span>
