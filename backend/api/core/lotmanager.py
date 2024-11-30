@@ -6,7 +6,7 @@ class ParkingLotManager:
     def __init__(self):
         self.parking_lots: Dict[str, ParkingSimulation] = {}
 
-    def add_parking_lot(self, lot_name: str, num_levels: int, is_multi_level: bool):
+    def add_parking_lot(self, lot_name: str, num_levels: int, is_multi_level: bool, address: str):
         if lot_name in self.parking_lots:
             raise ValueError(f"Parking lot '{lot_name}' already exists.")
         simulation = ParkingSimulation(lot_name, num_levels, is_multi_level)

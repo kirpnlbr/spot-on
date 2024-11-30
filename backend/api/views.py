@@ -7,27 +7,25 @@ from django.views.decorators.csrf import csrf_exempt
 import random
 import logging
 
-# Configure logging
 logger = logging.getLogger(__name__)
 
-# Initialize the ParkingLotManager and add multiple parking lots
 parking_lot_manager = ParkingLotManager()
 
-# Add three parking lots with varying levels and multilevel configurations
 for lot in [
-    {"lot_name": "Central Mall Parking", "num_levels": 2, "is_multi_level": True},
-    {"lot_name": "SM Southmall Parking", "num_levels": 1, "is_multi_level": False},
-    {"lot_name": "Uptown Parking", "num_levels": 2, "is_multi_level": True},
+    {"lot_name": "Central Square", "num_levels": 2, "is_multi_level": True, "address": "Central Square 5th Avenue cor. 30th Street Bonifacio Global City, Taguig"},
+    {"lot_name": "SM Aura", "num_levels": 1, "is_multi_level": False, "address":"26th Street corner McKinley Parkway, Bonifacio Global City, Taguig"},
+    {"lot_name": "Uptown Place Mall", "num_levels": 2, "is_multi_level": True, "address":"9th Ave. corner 36th St., Uptown Bonifacio, The Fort, Taguig"},
 ]:
     try:
         parking_lot_manager.add_parking_lot(
             lot_name=lot["lot_name"],
             num_levels=lot["num_levels"],
-            is_multi_level=lot["is_multi_level"]
+            is_multi_level=lot["is_multi_level"],
+            address=lot["address"]
         )
         logger.info(f"Added parking lot: {lot['lot_name']}")
     except ValueError as ve:
-        logger.warning(str(ve))  # Parking lot already exists
+        logger.warning(str(ve))
 
 
 @api_view(['GET'])

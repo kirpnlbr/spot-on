@@ -9,7 +9,7 @@ function NavigationPage({ onBack, selectedLot }) {
     return (
         <div class="flex flex-col space-y-4 bg-white h-screen overflow-y-auto">
             {/* Header */}
-            <div class="flex flex-col space-y-6 p-4 border-b shadow-sm bg-[#068ef1] sticky top-0 z-10">
+            <div class="flex flex-col space-y-6 px-4 pt-4 pb-5 border-b shadow-sm bg-[#068ef1] sticky top-0 z-10 rounded-b-lg">
                 <div class="flex items-center gap-3">
                     <button
                         onClick={onBack}
