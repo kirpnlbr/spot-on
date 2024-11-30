@@ -12,6 +12,8 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
     const [nearestSpotId, setNearestSpotId] = useState(null);
     const [entryPoint, setEntryPoint] = useState(null);
 
+
+
     // Function to fetch parking grid data
     const fetchParkingGrid = () => {
         setIsLoading(true);
@@ -57,6 +59,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                 setIsLoading(false);
             });
     };
+
 
     // Effect to handle lot changes
     useEffect(() => {
