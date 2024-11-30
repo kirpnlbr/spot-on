@@ -6,6 +6,7 @@ import signal
 from datetime import datetime
 from ..core.system import SpotOnSystem
 from ..core.manual_priority_queue import ManualPriorityQueue
+from ..core.manual_bfs_queue import ManualBFSQueue  # Importing ManualBFSQueue
 import logging
 
 # Configure logging
@@ -18,7 +19,7 @@ class ParkingSimulation:
         num_levels,
         is_multi_level,
         address,
-        occupancy_rate=0.1  # Default occupancy rate of 10%
+        occupancy_rate=0.5  # Default occupancy rate of 10%
     ):
         self.lot_name = lot_name
         self.is_multi_level = is_multi_level
@@ -281,7 +282,7 @@ class ParkingSimulation:
         if duration_seconds is None:
             duration_seconds = 60
         if update_interval is None:
-            update_interval = 1.0
+            update_interval = 2.0
         if arrival_rate is None:
             arrival_rate = 0.7
         if departure_rate is None:
@@ -333,7 +334,7 @@ class ParkingSimulation:
             logger.error(f"Invalid points format: {point1}, {point2}. Expected tuples of two integers.")
             return float('inf')
         x1, y1 = point1
-        x2, y2 = point2 
+        x2, y2 = point2
         # Use Manhattan distance for grid-like movement
         distance = abs(x2 - x1) + abs(y2 - y1)
         logger.debug(f"Calculated distance between {point1} and {point2}: {distance:.2f}")
