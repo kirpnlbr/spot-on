@@ -15,7 +15,7 @@ function ParkingLotsPage({ onSelectLot }) {
     }, []);
 
     return (
-        <div class="flex flex-col bg-white min-h-screen">
+        <div class="flex flex-col h-screen">
             <div class="p-4 shadow-sm border-b border-[#E5E3DD]">
                 <input
                     type="text"
@@ -24,7 +24,9 @@ function ParkingLotsPage({ onSelectLot }) {
                 />
             </div>
 
-            <ParkingLots onSelectLot={onSelectLot} parkingLots={parkingData} />
+            <div className="flex-1 overflow-y-auto pb-24">
+                <ParkingLots onSelectLot={onSelectLot} parkingLots={parkingData} />
+            </div>
         </div>
     );
 }

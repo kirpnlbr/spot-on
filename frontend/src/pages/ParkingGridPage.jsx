@@ -12,7 +12,14 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
     const [nearestSpotId, setNearestSpotId] = useState(null);
     const [entryPoint, setEntryPoint] = useState(null);
 
-
+    const getMultiplier = (levelCount) => {
+        switch (levelCount) {
+            case 2: return 190;
+            case 3: return 290;
+            case 5: return 580;
+            default: return 100;
+        }
+    };
 
     // Function to fetch parking grid data
     const fetchParkingGrid = () => {
@@ -110,13 +117,15 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             {/* Level Selector */}
             {lot.is_multi_level && (
                 <div class="px-5 mb-4">
-                    <div class="flex p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm">
+                    <div class="flex p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm overflow-x-auto">
                         <motion.div
                             class="absolute inset-[4px] bg-white rounded-md"
                             initial={false}
+                            style={{
+                                width: `calc(100% / ${levels.length})`
+                            }}
                             animate={{
-                                x: selectedLevel === 2 ? 'calc(100% - 8px)' : '0%',
-                                width: '50%'
+                                x: `calc(${selectedLevel - 1} * ${getMultiplier(levels.length)}% / ${levels.length})`
                             }}
                             transition={{
                                 type: "spring",
