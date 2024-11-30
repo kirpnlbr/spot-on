@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ParkingGrid from '../components/parking/ParkingGrid';
 import { getParkingGrid, startSimulation, stopSimulation } from '../services/api';
 import { ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 function ParkingGridPage({ lot, onBack, onNavigate }) {
     const [parkingGrid, setParkingGrid] = useState([]);
@@ -147,19 +148,33 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
 
             {/* Level Selector */}
             {lot.is_multi_level && (
-                <div class="px-5">
-                    <div class="flex gap-2 p-1 bg-[#e3e2e2] rounded-lg overflow-x-auto shadow-sm">
+                <div class="px-5 mb-4">
+                    <div class="flex gap-2 p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm">
+                        <motion.div
+                            className="absolute inset-[4px] bg-white rounded-md"
+                            initial={false}
+                            animate={{
+                                x: `calc(${selectedLevel - 1} * (100% - 8px + 8px))`,
+                                width: `calc((100% - 8px) / ${levels.length})`
+                            }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 360,
+                                damping: 30
+                            }}
+                        />
                         {levels.map(level => (
-                            <button
+                            <motion.button
                                 key={level}
                                 onClick={() => setSelectedLevel(level)}
-                                class={`flex-1 px-4 py-1.5 font-medium text-sm transition-colors rounded-md whitespace-nowrap ${selectedLevel === level
-                                    ? 'bg-white text-[#068ef1]'
+                                className={`relative flex-1 px-4 py-1.5 font-medium text-sm rounded-md whitespace-nowrap ${selectedLevel === level
+                                    ? 'text-[#068ef1]'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
+                                whileTap={{ scale: 0.95 }}
                             >
                                 Level {level}
-                            </button>
+                            </motion.button>
                         ))}
                     </div>
                 </div>
