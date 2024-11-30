@@ -51,7 +51,7 @@ function App() {
   };
 
   return (
-    <div class="max-w-sm font-lexend bg-white mx-auto h-screen pb-16 relative overflow-hidden">
+    <div class="max-w-sm font-geist bg-white mx-auto h-screen pb-16 relative overflow-hidden">
       <AnimatePresence mode="wait" initial={false}>
         {currentPage === 'location' && (
           <PageTransition key="location" direction={direction}>
