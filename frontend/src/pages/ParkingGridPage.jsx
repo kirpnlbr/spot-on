@@ -136,30 +136,29 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
     }, [selectedLevel]); // Runs when 'selectedLevel' changes
 
     return (
-        <div className="flex flex-col space-y-4 bg-gray-100 min-h-screen">
+        <div class="flex flex-col space-y-4 h-screen overflow-y-auto pb-24">
             {/* Header */}
-            <div className="bg-white flex p-4 items-center border-b shadow-sm">
-                <button onClick={onBack}>
+            <div class="bg-white flex p-4 items-center border-b shadow-sm">
+                <button onClick={onBack} class="hover:bg-gray-800/10 p-2 rounded-full transition-colors">
                     <ArrowLeft />
                 </button>
-                <span className="ml-2 text-lg font-semibold text-gray-900">{lot.name}</span>
+                <span class="ml-2 text-lg font-semibold text-gray-900">{lot.name}</span>
             </div>
 
             {/* Level Selector */}
             {lot.is_multi_level && (
                 <div class="px-5">
-                    <p class="text-gray-500 text-sm font-medium mb-1.5">Current level</p>
                     <div class="flex gap-2 p-1 bg-[#e3e2e2] rounded-lg overflow-x-auto shadow-sm">
                         {levels.map(level => (
                             <button
                                 key={level}
                                 onClick={() => setSelectedLevel(level)}
-                                class={`flex-1 px-4 py-2 font-medium transition-colors rounded-md whitespace-nowrap ${selectedLevel === level
+                                class={`flex-1 px-4 py-1.5 font-medium text-sm transition-colors rounded-md whitespace-nowrap ${selectedLevel === level
                                     ? 'bg-white text-[#068ef1]'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
                             >
-                                L{level}
+                                Level {level}
                             </button>
                         ))}
                     </div>
@@ -167,20 +166,19 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             )}
 
             {/* Parking Grid */}
-            <div className="bg-white mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
-                <p className="text-gray-500 text-sm font-medium mb-2">Parking layout</p>
+            <div class="bg-white mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
                 {isLoading ? (
-                    <div className="text-center text-gray-500">Loading parking grid...</div>
+                    <div class="text-center text-gray-500">Loading parking grid...</div>
                 ) : (
-                    <ParkingGrid parkingGrid={parkingGrid} />
+                    <ParkingGrid parkingGrid={parkingGrid} nearestSpotId={nearestSpotId} />
                 )}
             </div>
 
             {/* Navigate to Spot */}
-            <div className="mx-3 p-4 rounded-xl bg-white border-[1.5px] border-gray-100 shadow-sm">
-                <div className="flex flex-col">
-                    <span className="font-medium text-sm text-gray-500">Nearest spot found!</span>
-                    <span className="font-bold text-lg text-gray-800 pb-4">
+            <div class="mx-3 p-4 rounded-xl bg-[#d3e4f0] shadow-sm">
+                <div class="flex flex-col">
+                    <span class="font-medium text-sm text-gray-600">Nearest spot found!</span>
+                    <span class="font-bold text-xl text-gray-800 pb-4">
                         {nearestSpotId ? nearestSpotId.split('-')[1] : 'N/A'}
                     </span>
                     <button
@@ -191,9 +189,9 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                                 alert('No available spot to navigate.');
                             }
                         }}
-                        className={`rounded-xl p-3 border-[1.5px] border-blue-500 text-white font-medium w-full 
+                        class={`rounded-xl p-3 text-white font-medium w-full 
                         ${nearestSpotId
-                                ? 'bg-[#068ef1] hover:bg-blue-600'
+                                ? 'bg-[#068ef1]'
                                 : 'bg-gray-400 cursor-not-allowed'
                             }`}
                         disabled={!nearestSpotId}
@@ -203,7 +201,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     </button>
 
                     {/* Debug Information */}
-                    <div className="mt-4 text-xs text-gray-400">
+                    <div class="mt-4 text-xs text-gray-400">
                         <p>Nearest Spot ID: {nearestSpotId || 'N/A'}</p>
                         <p>Entry Point: {entryPoint ? `(${entryPoint[0]}, ${entryPoint[1]})` : 'N/A'}</p>
                     </div>

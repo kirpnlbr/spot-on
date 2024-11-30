@@ -10,7 +10,7 @@ function LocationPage({ onEnableLocation, onSkip }) {
                     <p class="text-gray-600 text-center">We need your location to find the nearest available parking spot!</p>
                 </div>
                 <div class="flex flex-col space-y-3 items-center">
-                    <button onClick={onEnableLocation} class="rounded-xl p-3 bg-[#068ef1] text-white font-medium w-3/4 hover:bg-blue-600">Allow Location Access</button>
+                    <button onClick={onEnableLocation} class="rounded-xl p-3 bg-[#068ef1] text-white font-medium w-3/4">Allow Location Access</button>
                     <button onClick={onSkip} class="text-[#068ef1] underline text-sm font-medium w-full ">Maybe Later</button>
                 </div>
             </div>
