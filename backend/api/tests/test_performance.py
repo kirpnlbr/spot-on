@@ -13,7 +13,6 @@ def measure_time(func):
         return result
     return wrapper
 
-
 class PerformanceTest:
     def __init__(self):
         self.test_sizes = [100, 500, 1000, 5000]  # Different dataset sizes
@@ -63,7 +62,6 @@ class PerformanceTest:
             print("-" * 20)
             self.test_nearest_spot_priority_queue(size, level)
             self.test_nearest_spot_bfs(size, level)
-
 
 if __name__ == "__main__":
     tester = PerformanceTest()

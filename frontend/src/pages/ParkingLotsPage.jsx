@@ -16,11 +16,11 @@ function ParkingLotsPage({ onSelectLot }) {
 
     return (
         <div class="flex flex-col bg-white min-h-screen">
-            <div class="p-4 shadow-sm border-b">
+            <div class="p-4 shadow-sm border-b border-[#E5E3DD]">
                 <input
                     type="text"
                     placeholder="Search parking lot..."
-                    class="border-[1.5px] border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
+                    class="border-[1px] border-gray-200 bg-gray-50 w-full p-3 rounded-lg"
                 />
             </div>
 

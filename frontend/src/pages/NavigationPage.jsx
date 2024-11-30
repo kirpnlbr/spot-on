@@ -45,7 +45,7 @@ function NavigationPage({ onBack, selectedLot }) {
                         <span class="font-bold text-lg text-gray-800">{spot.estimatedTime}</span>
                     </div>
                 </div>
-                <button class="rounded-xl p-3 bg-[#068ef1] mt-4 text-white font-medium w-full">I've Arrived</button>
+                <button class="rounded-xl p-3 bg-[#068ef1] hover:bg-[#1F9FFC] mt-4 text-white font-medium w-full active:scale-95 transition">I've Arrived</button>
             </div>
         </div>
     );

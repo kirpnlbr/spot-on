@@ -189,9 +189,9 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                                 alert('No available spot to navigate.');
                             }
                         }}
-                        class={`rounded-xl p-3 text-white font-medium w-full 
+                        class={`rounded-xl p-3 text-white font-medium w-full active:scale-95 transition
                         ${nearestSpotId
-                                ? 'bg-[#068ef1]'
+                                ? 'bg-[#068ef1] hover:bg-[#1F9FFC]'
                                 : 'bg-gray-400 cursor-not-allowed'
                             }`}
                         disabled={!nearestSpotId}
