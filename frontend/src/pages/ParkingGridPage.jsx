@@ -107,13 +107,13 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
             {/* Level Selector */}
             {lot.is_multi_level && (
                 <div className="px-5 mb-4">
-                    <div className="flex gap-2 p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm">
+                    <div className="flex p-1 bg-[#e3e2e2] rounded-lg relative shadow-sm">
                         <motion.div
                             className="absolute inset-[4px] bg-white rounded-md"
                             initial={false}
                             animate={{
-                                x: `calc(${selectedLevel - 1} * (100% / ${levels.length}))`,
-                                width: `calc((100% - 8px) / ${levels.length})`
+                                x: selectedLevel === 2 ? 'calc(100% - 8px)' : '0%',
+                                width: '50%'
                             }}
                             transition={{
                                 type: "spring",
@@ -137,6 +137,7 @@ function ParkingGridPage({ lot, onBack, onNavigate }) {
                     </div>
                 </div>
             )}
+
 
             {/* Parking Grid */}
             <div className="bg-white mx-3 p-5 rounded-xl border-[1.5px] border-gray-100 shadow-sm">
