@@ -82,20 +82,34 @@ class SpotOnSystem:
         queue.append(entry_point)
         visited.add(entry_point)
 
+        # Get the set of valid coordinates for spots on this level
+        valid_coords = {
+            coord for spot_id, coord in self.parking_lot.spot_coordinates.items()
+            if self.parking_lot.spots[spot_id].level == level
+        }
+
+        # If the entry point is not in valid_coords, find the closest valid coordinate
+        if entry_point not in valid_coords:
+            # Find the closest valid coordinate to the entry point
+            closest_coord = min(valid_coords, key=lambda c: self.calculate_distance(entry_point, c))
+            entry_point = closest_coord
+            queue.clear()
+            queue.append(entry_point)
+            visited.add(entry_point)
+
         while queue:
             current_point = queue.popleft()
-            # Check if any spot exists at the current_point and is available
-            for spot_id, coord in self.parking_lot.spot_coordinates.items():
-                if coord == current_point:
-                    spot = self.parking_lot.spots.get(spot_id)
-                    if spot and not spot.is_occupied and spot.level == level:
-                        print(f"Nearest spot (BFS) for level {level}: {spot_id} at {coord}")
-                        return spot_id
+            spot_id = self.parking_lot.coord_to_spot_id.get((level, current_point))
+            if spot_id:
+                spot = self.parking_lot.spots.get(spot_id)
+                if spot and not spot.is_occupied and spot.level == level:
+                    print(f"Nearest spot (BFS) for level {level}: {spot_id} at {current_point}")
+                    return spot_id
 
-            # Explore neighboring points
+            # Explore neighboring points within valid coordinates
             neighbors = self.get_neighbors(current_point)
             for neighbor in neighbors:
-                if neighbor not in visited:
+                if neighbor not in visited and neighbor in valid_coords:
                     visited.add(neighbor)
                     queue.append(neighbor)
                     print(f"Adding neighbor to queue: {neighbor} on level {level}")
@@ -103,21 +117,25 @@ class SpotOnSystem:
         print(f"No available spots found using BFS for level {level}.")
         return None
 
+
     def get_neighbors(self, point: Tuple[int, int]) -> List[Tuple[int, int]]:
         """
-        Get adjacent points (up, down, left, right).
+        Get adjacent points (up, down, left, right) that are valid parking spot coordinates.
         """
-        if not isinstance(point, tuple) or len(point) != 2:
-            print(f"Invalid point format: {point}. Expected a tuple of two integers.")
-            return []
         x, y = point
-        neighbors = [
+        potential_neighbors = [
             (x - 1, y),
             (x + 1, y),
             (x, y - 1),
             (x, y + 1)
         ]
-        return neighbors
+        # Filter neighbors to only those that exist in spot_coordinates
+        valid_neighbors = [
+            neighbor for neighbor in potential_neighbors
+            if neighbor in self.parking_lot.spot_coordinates.values()
+        ]
+        return valid_neighbors
+
 
     def calculate_distance(self, point1: Tuple[int, int], point2: Tuple[int, int]) -> float:
         """

@@ -221,7 +221,6 @@ class ParkingSimulation:
             logger.exception(f"Error in get_parking_grid: {str(e)}")
             return None
 
-
     def simulate_vehicle_arrival(self) -> Tuple[str, bool, int]:
         """
         Simulate the arrival of a vehicle and attempt to park it.
@@ -356,7 +355,7 @@ class ParkingSimulation:
             logger.error(f"Invalid points format: {point1}, {point2}. Expected tuples of two integers.")
             return float('inf')
         x1, y1 = point1
-        x2, y2 = point2
+        x2, y2 = point2  # Corrected this line
         # Use Manhattan distance for grid-like movement
         distance = abs(x2 - x1) + abs(y2 - y1)
         logger.debug(f"Calculated distance between {point1} and {point2}: {distance:.2f}")
