@@ -36,12 +36,12 @@ function NavigationPage({ onBack, selectedLot }) {
             {/* Path Info */}
             <div class="flex flex-col px-4 pb-28">
                 <div class="space-y-2">
-                    <div class="rounded-xl bg-[#d3e4f0] p-4 flex flex-col">
-                        <span class="font-medium text-sm text-gray-600">Distance</span>
+                    <div class="rounded-xl bg-[#f8f8f7] border border-gray-200 p-4 flex flex-col">
+                        <span class="font-medium text-sm text-gray-500">Distance</span>
                         <span class="font-bold text-lg text-gray-800">{spot.distance}</span>
                     </div>
-                    <div class="rounded-xl bg-[#d3e4f0] p-4 flex flex-col">
-                        <span class="font-medium text-sm text-gray-600">Estimated time</span>
+                    <div class="rounded-xl bg-[#f8f8f7] border border-gray-200 p-4 flex flex-col">
+                        <span class="font-medium text-sm text-gray-500">Estimated time</span>
                         <span class="font-bold text-lg text-gray-800">{spot.estimatedTime}</span>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ function ParkingLots({ onSelectLot, parkingLots }) {
                 >
                     <a class="flex flex-col gap-1 p-4 rounded-lg border-[1px] border-gray-200 hover:bg-gray-50 shadow-sm active:scale-95 transition">
                         <h2 class="font-medium text-gray-800 flex items-center">
-                            <span class="bg-[#068ef1] bg-opacity-25 rounded-full p-1 mr-1.5"><CircleParking class="text-[#068ef1] h-4 w-4" /></span>
+                            <span class="bg-[#E5E3DD] bg-opacity-25 rounded-full p-1 mr-1.5"><CircleParking class="text-[#B4B3AF] h-4 w-4" /></span>
                             {lot.name}
                         </h2>
                         <p class="text-sm text-[#068ef1]">
