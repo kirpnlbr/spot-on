@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api'; // Adjust as needed
+const API_BASE_URL = 'http://localhost:8000/api';
 
 export const getParkingGrid = (lotName, level) => {
     const url = `${API_BASE_URL}/parking_grid/${encodeURIComponent(lotName)}/`;

@@ -8,7 +8,6 @@ function NavigationPage({ onBack, nearestSpotId, entryPoint, lotName, selectedLe
     const [distance, setDistance] = useState('Calculating...');
     const [estimatedTime, setEstimatedTime] = useState('Calculating...');
 
-    // Function to fetch the latest nearest spot
     const fetchNearestSpot = () => {
         getParkingGrid(lotName, selectedLevel)
             .then(response => {
@@ -17,8 +16,6 @@ function NavigationPage({ onBack, nearestSpotId, entryPoint, lotName, selectedLe
                 } else {
                     setCurrentNearestSpotId('N/A');
                 }
-                // Update distance and estimated time if needed
-                // For now, we'll mock these values
                 setDistance('200 meters');
                 setEstimatedTime('3 mins');
             })
@@ -27,7 +24,6 @@ function NavigationPage({ onBack, nearestSpotId, entryPoint, lotName, selectedLe
             });
     };
 
-    // Set up polling to fetch the nearest spot every 2 seconds
     useEffect(() => {
         fetchNearestSpot();
         const intervalId = setInterval(() => {
