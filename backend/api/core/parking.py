@@ -12,6 +12,8 @@ class ParkingLot:
         self.entry_points: Dict[int, Tuple[int, int]] = {}  # Entry point per level
         self.vehicle_to_spot: Dict[str, str] = {}  # vehicle_id to spot_id
         self.spot_coordinates: Dict[str, Tuple[int, int]] = {}  # Map of spot_id to (x, y)
+        self.coord_to_spot_id: Dict[Tuple[int, Tuple[int, int]], str] = {}  # Map of (level, coord) to spot_id
+
 
     def add_parking_spot(self, spot_id: str, level: int, distance: Optional[float], coordinate: Tuple[int, int]) -> None:
         if spot_id in self.spots:
@@ -23,6 +25,7 @@ class ParkingLot:
         spot = ParkingSpot(id=spot_id, level=level, distance_from_entrance=distance)
         self.spots[spot_id] = spot
         self.spot_coordinates[spot_id] = coordinate
+        self.coord_to_spot_id[(level, coordinate)] = spot_id
 
         if level not in self.levels:
             self.levels[level] = []
