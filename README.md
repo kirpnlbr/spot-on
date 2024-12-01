@@ -4,6 +4,7 @@ SpotOn: Spot on parking, every time. A data structures &amp; algorithms project 
 ## Technologies Used
 ### Backend
 - Django
+- Axios API
 - Data Structures: Hash Tables, Priority Queues
 - Algorithms: BFS, Greedy Algorithm
 
