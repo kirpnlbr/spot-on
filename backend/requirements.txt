@@ -1,5 +1,5 @@
 # Core
-django==4.2.0
+django==4.2.17
 djangorestframework==3.14.0
 django-cors-headers==4.3.0
 
